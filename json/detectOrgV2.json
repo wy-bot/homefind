@@ -1,0 +1,376 @@
+{
+    "code": "success",
+    "data": [
+        {
+            "cities": [
+                {
+                    "cityName": "全部地区",
+                    "detectOrgs": [],
+                    "locationId": 320000
+                },
+                {
+                    "cityName": "苏州",
+                    "detectOrgs": [
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市吴江区庞东路600号",
+                            "orgName": "苏州京东方医院",
+                            "orgPhone": "0512-63123666",
+                            "sortScore": 1
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市常熟市青墩塘路36号",
+                            "orgName": "常熟市医学检验所",
+                            "orgPhone": "0512-52901521",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市昆山市花桥镇金洋路15号金融园15号",
+                            "orgName": "昆山迪安医学检验实验室有限公司",
+                            "orgPhone": "0512-86166555",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市昆山市前进西路91号",
+                            "orgName": "昆山市第一人民医院",
+                            "orgPhone": "0512-55233057",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市昆山市同丰西路458号",
+                            "orgName": "昆山市疾病预防控制中心",
+                            "orgPhone": "0512-57370701",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市昆山市玉山镇朝阳西路189号",
+                            "orgName": "昆山市中医医院",
+                            "orgPhone": "0512-57310000",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市姑苏区三香路1055号",
+                            "orgName": "苏州大学附属第二医院",
+                            "orgPhone": "18962113358",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市姑苏区十梓街188号",
+                            "orgName": "苏州大学附属第一医院",
+                            "orgPhone": "13606136542",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市工业园区钟南街92号",
+                            "orgName": "苏州大学附属儿童医院",
+                            "orgPhone": "0512-80691235",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州高新区华山路95号",
+                            "orgName": "苏州高新区人民医院",
+                            "orgPhone": "0512-69585026",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市工业园区苏虹西路200号",
+                            "orgName": "苏州工业园区疾病防治中心",
+                            "orgPhone": "0512-67614200",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "苏州市吴中区木渎镇金山南路218-1号",
+                            "orgName": "苏州和康中医医院",
+                            "orgPhone": "15370320107",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市虎丘区竹园路181号",
+                            "orgName": "苏州明基医院",
+                            "orgPhone": "0512-80838800",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市太仓市太平北路115号",
+                            "orgName": "苏州珀金埃尔默医学检验所有限公司",
+                            "orgPhone": "0512-53378788",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市吴中区越溪街道塔韵路5号",
+                            "orgName": "苏州瑞华骨科医院",
+                            "orgPhone": "0512-69219999",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市吴江区太湖新城芦荡路2666号",
+                            "orgName": "苏州市第九人民医院",
+                            "orgPhone": "0512-82881138",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市工业园区崇文路9号",
+                            "orgName": "苏州市独墅湖医院",
+                            "orgPhone": "0512-67505206",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市相城区广前路10号",
+                            "orgName": "苏州市第五人民医院检验中心",
+                            "orgPhone": "13013807540",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市姑苏区盘门路135号",
+                            "orgName": "苏州市姑苏区疾病预防控制中心",
+                            "orgPhone": "0512-68129366",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市姑苏区三香路72号",
+                            "orgName": "苏州市疾病预防控制中心",
+                            "orgPhone": "0512-68261772",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市姑苏区道前街26号",
+                            "orgName": "苏州市立医院",
+                            "orgPhone": "0512-62362660",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市姑苏区虎丘街道广济路242号",
+                            "orgName": "苏州市立医院北区",
+                            "orgPhone": "0512-62363507",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市姑苏区白塔西路16号",
+                            "orgName": "苏州市立医院东区",
+                            "orgPhone": "0512-62364521",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市吴中区枫津路40号",
+                            "orgName": "苏州市立医院医学检验科（南区）",
+                            "orgPhone": "15950093311",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市吴江区高新路551号",
+                            "orgName": "苏州市吴江区疾病预防控制中心",
+                            "orgPhone": "0512-63160221",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市吴江区平望镇通运路73号",
+                            "orgName": "苏州市吴江区中医医院（苏州市吴江区第二人民医院）",
+                            "orgPhone": "0512-63655930",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "苏省苏州市吴中区太湖西路269号1楼",
+                            "orgName": "苏州市吴中区疾病预防控制中心",
+                            "orgPhone": "0512-65620235",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市吴中区甪直镇田肚江路30号",
+                            "orgName": "苏州市吴中区甪直人民医院",
+                            "orgPhone": "0512-66026111",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市吴中区东吴北路61号",
+                            "orgName": "苏州市吴中人民医院",
+                            "orgPhone": "0512-33333600",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市相城区",
+                            "orgName": "苏州市相城区疾病预防控制中心",
+                            "orgPhone": "0512-66181776",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市相城区",
+                            "orgName": "苏州相城人民医院",
+                            "orgPhone": "0512-69571800",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市太仓市常胜南路58号",
+                            "orgName": "太仓市第一人民医院",
+                            "orgPhone": "0512-53101356",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市张家港市暨阳西路68号",
+                            "orgName": "张家港市第一人民医院",
+                            "orgPhone": "0512-56919560",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州市张家港市",
+                            "orgName": "张家港市疾病预防控制中心",
+                            "orgPhone": "0512-58234356",
+                            "sortScore": 0
+                        },
+                        {
+                            "canAppoint": false,
+                            "h5LinkUrl": "",
+                            "miniLinkUrl": "",
+                            "miniQrcodeUrl": "",
+                            "orgAddress": "江苏省苏州张家港市康乐路4号",
+                            "orgName": "张家港市中医医院",
+                            "orgPhone": "0512-56380976",
+                            "sortScore": 0
+                        }
+                    ],
+                    "locationId": 320500
+                }
+            ],
+            "locationId": 320000,
+            "provinceShortName": "江苏"
+        }
+        
+    ],
+    "message": "",
+    "success": true,
+    "successAndNotNull": true
+}

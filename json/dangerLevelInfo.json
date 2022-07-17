@@ -1,0 +1,476 @@
+{
+    "code": "success",
+    "data": [
+        {
+            "dangerCount": 3,
+            "dangerLevel": 1,
+            "dangerPros": [
+                {
+                    "dangerAreas": [
+                        {
+                            "areaName": "武川县上秃亥乡圪奔村",
+                            "cityName": "呼和浩特"
+                        }
+                    ],
+                    "provinceId": "15",
+                    "provinceName": "内蒙古自治区",
+                    "provinceShortName": "内蒙古"
+                },
+                {
+                    "dangerAreas": [
+                        {
+                            "areaName": "绥中县加碑岩乡窝岭村",
+                            "cityName": "葫芦岛"
+                        }
+                    ],
+                    "provinceId": "21",
+                    "provinceName": "辽宁省",
+                    "provinceShortName": "辽宁"
+                },
+                {
+                    "dangerAreas": [
+                        {
+                            "areaName": "德保县都安乡伏计村陇意屯",
+                            "cityName": "百色"
+                        }
+                    ],
+                    "provinceId": "45",
+                    "provinceName": "广西壮族自治区",
+                    "provinceShortName": "广西"
+                }
+            ]
+        },
+        {
+            "dangerCount": 93,
+            "dangerLevel": 2,
+            "dangerPros": [
+                {
+                    "dangerAreas": [
+                        {
+                            "areaName": "成吉思汗大街道代洲营村",
+                            "cityName": "呼和浩特"
+                        },
+                        {
+                            "areaName": "成吉思汗大街道毫沁营村",
+                            "cityName": "呼和浩特"
+                        },
+                        {
+                            "areaName": "敕勒川街道怡水园社区",
+                            "cityName": "呼和浩特"
+                        },
+                        {
+                            "areaName": "东风路街道丽苑社区",
+                            "cityName": "呼和浩特"
+                        },
+                        {
+                            "areaName": "东影北街社区",
+                            "cityName": "呼和浩特"
+                        },
+                        {
+                            "areaName": "芳汀花园社区",
+                            "cityName": "呼和浩特"
+                        },
+                        {
+                            "areaName": "回民区环河街街道县府街社区",
+                            "cityName": "呼和浩特"
+                        },
+                        {
+                            "areaName": "巨海社区",
+                            "cityName": "呼和浩特"
+                        },
+                        {
+                            "areaName": "军区第三干休所社区",
+                            "cityName": "呼和浩特"
+                        },
+                        {
+                            "areaName": "林县经济开发区第一农场",
+                            "cityName": "呼和浩特"
+                        },
+                        {
+                            "areaName": "赛罕区巴彦镇学苑社区",
+                            "cityName": "呼和浩特"
+                        },
+                        {
+                            "areaName": "赛罕区昭乌达南路街道小台什社区",
+                            "cityName": "呼和浩特"
+                        },
+                        {
+                            "areaName": "土左旗白庙子镇碱房村",
+                            "cityName": "呼和浩特"
+                        },
+                        {
+                            "areaName": "土左旗白庙子镇瓦房院新村",
+                            "cityName": "呼和浩特"
+                        },
+                        {
+                            "areaName": "武川县可镇新东街社区",
+                            "cityName": "呼和浩特"
+                        },
+                        {
+                            "areaName": "乌兰察布路街道长乐宫社区",
+                            "cityName": "呼和浩特"
+                        },
+                        {
+                            "areaName": "新城区成吉思汗街道东河社区",
+                            "cityName": "呼和浩特"
+                        },
+                        {
+                            "areaName": "祥园社区",
+                            "cityName": "呼和浩特"
+                        },
+                        {
+                            "areaName": "玉泉区石东路街道苁蓉社区",
+                            "cityName": "呼和浩特"
+                        },
+                        {
+                            "areaName": "玉泉区兴隆巷街道四里营东社区",
+                            "cityName": "呼和浩特"
+                        },
+                        {
+                            "areaName": "玉泉区兴隆巷街道小黑河镇祥和苑社区",
+                            "cityName": "呼和浩特"
+                        },
+                        {
+                            "areaName": "攸攸板镇攸攸板村",
+                            "cityName": "呼和浩特"
+                        },
+                        {
+                            "areaName": "中专路街道园艺所社区",
+                            "cityName": "呼和浩特"
+                        },
+                        {
+                            "areaName": "满洲里市南区街道",
+                            "cityName": "呼伦贝尔"
+                        }
+                    ],
+                    "provinceId": "15",
+                    "provinceName": "内蒙古自治区",
+                    "provinceShortName": "内蒙古"
+                },
+                {
+                    "dangerAreas": [
+                        {
+                            "areaName": "绥中县绥中镇工人社区盛华园二期",
+                            "cityName": "葫芦岛"
+                        }
+                    ],
+                    "provinceId": "21",
+                    "provinceName": "辽宁省",
+                    "provinceShortName": "辽宁"
+                },
+                {
+                    "dangerAreas": [
+                        {
+                            "areaName": "爱辉区鹿源春社区金达之家小区中房49号楼",
+                            "cityName": "黑河"
+                        },
+                        {
+                            "areaName": "爱辉区武庙屯社区之路佳苑小区4号楼",
+                            "cityName": "黑河"
+                        },
+                        {
+                            "areaName": "爱辉区向阳社区水岸阳光小区9号楼",
+                            "cityName": "黑河"
+                        }
+                    ],
+                    "provinceId": "23",
+                    "provinceName": "黑龙江省",
+                    "provinceShortName": "黑龙江"
+                },
+                {
+                    "dangerAreas": [
+                        {
+                            "areaName": "常熟市紫晶城5幢",
+                            "cityName": "苏州",
+                            "X": "120.62",
+                            "Y": "31.31"
+                        },
+                        {
+                            "areaName": "常熟市中欧假日花园9幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "姑苏区大竹园3号楼",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "姑苏区天辰花园小区18幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "姑苏区吴门桥街道长欣苑南区4幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "姑苏区胥江路361号（东方苑）1幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "姑苏区永林二区12幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "苏州工业园区东城郡115幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "苏州工业园区东湖大郡花园二期22幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "苏州工业园区凤凰城49幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "苏州工业园区湖畔天城花园16幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "苏州工业园区花语江南20幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "苏州工业园区京隆生活区",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "苏州工业园区锦溪苑26幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "苏州工业园区绿地·华尔道名邸小区",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "苏州工业园区澜溪苑18幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "苏州工业园区明日之星1幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "苏州工业园区南山·丽舍40幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "苏州工业园区文华公寓4号楼",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "苏州工业园区夏家桥118号9幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "苏州工业园区星胜客11幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "苏州工业园区斜塘老街12号",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "苏州工业园区阳浦路150号1幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "吴江区八坼街道邮电街23号2幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "吴江区江陵街道城南花苑2167幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "吴江区盛泽镇绿洲华庭小区41栋",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "吴江区长安花园21幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "吴江区长安路2358号吴江科技创业园",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "吴中区碧堤半岛53幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "吴中区碧水湾花园60幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "吴中区郭巷街道独墅湖西金悦花园一期19幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "吴中区郭巷街道国泰社区国泰一村105幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "吴中区郭巷街道建发独墅湾82幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "吴中区郭巷街道双湾花园35幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "吴中区龙西新村（箭阙苑）40幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "吴中区甪直镇长巨村下扒浜马娄里172号",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "吴中区木渎镇沈巷村47～69号",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "吴中区水岸清华97幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "吴中区世茂石湖湾花园二期273幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "吴中区尹山湖景花园三期43幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "相城区北桥街道漕韵家园28幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "相城区北桥街道盛北花园45幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "相城区官渡花园26幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "相城区合景峰汇8期12幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "相城区苏州万科魅力花园3幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "相城区万宇名都花园5幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "张家港市凤凰镇金谷小区18、19幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "张家港市凤凰镇双龙花园62幢",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "张家港市杨舍镇君临新城6号楼",
+                            "cityName": "苏州"
+                        },
+                        {
+                            "areaName": "张家港市杨舍镇民丰苑西区21幢、29幢",
+                            "cityName": "苏州"
+                        }
+                    ],
+                    "provinceId": "32",
+                    "provinceName": "江苏省",
+                    "provinceShortName": "江苏"
+                },
+                {
+                    "dangerAreas": [
+                        {
+                            "areaName": "龙岗区坂田街道马安堂社区侨联东10巷1号顺兴楼",
+                            "cityName": "深圳"
+                        },
+                        {
+                            "areaName": "罗湖区东门街道新园路明华广场1至6楼（含6A与M层）商业区",
+                            "cityName": "深圳"
+                        },
+                        {
+                            "areaName": "中兴路高时石材B区A钢构厂房",
+                            "cityName": "深圳"
+                        }
+                    ],
+                    "provinceId": "44",
+                    "provinceName": "广东省",
+                    "provinceShortName": "广东"
+                },
+                {
+                    "dangerAreas": [
+                        {
+                            "areaName": "城关镇隆盛社区东蒙荣盛二巷25号",
+                            "cityName": "百色"
+                        },
+                        {
+                            "areaName": "城关镇隆盛社区盛象名都小区",
+                            "cityName": "百色"
+                        },
+                        {
+                            "areaName": "都安乡坡那村多麦屯",
+                            "cityName": "百色"
+                        },
+                        {
+                            "areaName": "德保县都安乡福记村山金屯",
+                            "cityName": "百色"
+                        },
+                        {
+                            "areaName": "德保县维也纳酒店（德保腾飞广场店）",
+                            "cityName": "百色"
+                        },
+                        {
+                            "areaName": "东凌镇登限村念洞屯",
+                            "cityName": "百色"
+                        },
+                        {
+                            "areaName": "敬德镇陇正村多果屯",
+                            "cityName": "百色"
+                        },
+                        {
+                            "areaName": "靖西市武平镇大道街大定屯",
+                            "cityName": "百色"
+                        },
+                        {
+                            "areaName": "莲城社区德立山庄",
+                            "cityName": "百色"
+                        },
+                        {
+                            "areaName": "弄贴村新村屯",
+                            "cityName": "百色"
+                        }
+                    ],
+                    "provinceId": "45",
+                    "provinceName": "广西壮族自治区",
+                    "provinceShortName": "广西"
+                },
+                {
+                    "dangerAreas": [
+                        {
+                            "areaName": "麻栗坡县杨万乡哪都村委会达干村小组",
+                            "cityName": "文山州"
+                        },
+                        {
+                            "areaName": "河口县河口农场23队",
+                            "cityName": "红河州"
+                        }
+                    ],
+                    "provinceId": "53",
+                    "provinceName": "云南省",
+                    "provinceShortName": "云南"
+                }
+            ]
+        }
+    ],
+    "message": "",
+    "success": true,
+    "successAndNotNull": true
+}
