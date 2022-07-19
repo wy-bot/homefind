@@ -11,35 +11,16 @@ import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
-import {Icon, Style} from 'ol/style';
+import {Icon, Stroke, Style, Fill} from 'ol/style';
 import marker from './images/marker.png';
 import VectorContext from 'ol/render/VectorContext';
 import {Raster as RasterSource} from 'ol/source'
 import ImageLayer from 'ol/layer/Image';
+import WMSGetFeatureInfo from 'ol/format/WMSGetFeatureInfo';
 
 
-//xyz加载天地图
-// const map_xyz = new Map({
-//     target: "map",
-//     layers:[
-//         new TileLayer({
-//             source: new XYZ({
-//                 url: "http://t0.tianditu.com/DataServer?T=vec_w&x={x}&y={y}&l={z}&tk=1b5c70b0b006efdd020b4e374c73b1b9"
-//             })
-//         }),
-//         new TileLayer({
-//             source: new XYZ({
-//                 url: "http://t0.tianditu.com/DataServer?T=cva_w&x={x}&y={y}&l={z}&tk=1b5c70b0b006efdd020b4e374c73b1b9"
-//             })
-//         })
-//     ],
-//     view: new View({
-//         center: [0,0],
-//         zoom: 2
-//     })
-// })
 
-//wmts加载天地图
+//设置坐标系，范围
 const projection = getProjection("EPSG:3857");
 const projectionExtent = projection.getExtent();
 const size = getWidth(projectionExtent)/256;
@@ -52,61 +33,9 @@ for (let z=0;z<=19;++z){
 
 
 
-// var json_all = []
-// for (var i= 0;i<json.data.length;i++){
-//     if (json.data[i].dangerLevel == 2){
-//         var json_all_1 = json.data[i]
-//         json_all_1 = json_all_1.dangerPros
-        
-//         for (var j = 0;j<json_all_1.length;j++){
-//             if (json_all_1[j].provinceShortName == "江苏"){
-//                 json_all_1 = json_all_1[j]
-//                 json_all_1 = json_all_1.dangerAreas
-                
-//                 for (var k =0;k<json_all_1.length;k++){
-//                     if (json_all_1[k].cityName == "苏州"){
-//                         // json_all_1 = json_all_1[k]
-//                         json_all.push(json_all_1[k])
-//                     }
-                        
-//                 }
-//             }
-//         }
-//     }
-// }
-// var json_all_xy = json_all[0]
-
-// var marker = require('./images/marker.png')
 
 
-
-// const iconStyle = new Style({
-//     image: new Icon({
-//         anchor: [0.5, 46],
-//         anchorXUnits: "fraction",
-//         anchorYUnits: "pixels",
-//         color: '#ffffff',
-//         src: marker
-//     }),
-// })
-
-// var feature = new Feature({
-//     geometry: new Point(fromLonLat([120.62,31.31]))
-//         // img: new Icon({
-//         //     anchor: [0.5, 46],
-//         //     src: 'https://images.xiaozhuanlan.com/photo/2020/af4d72639f0ff7e0599c9d3935b123af.png'
-//         // })
-// })
-// feature.setStyle(iconStyle)
-// var source = new VectorSource({
-//     features: [feature]
-// })
-    
-// var layer = new VectorLayer({
-//     source: source
-// })
-// map_wmts.addLayer(layer)
-
+//创建天地图图层（使用XYZ）
 let layerOrigin = new TileLayer({
     name: "天地图矢量图层",
     source: new XYZ({
@@ -115,7 +44,7 @@ let layerOrigin = new TileLayer({
     crossOrigin: 'anonymous'
     })
     });
-
+//创建天地图标注图层
 let layercvaOrigin = new TileLayer({
     name: "天地图矢量图层",
     source: new XYZ({
@@ -125,6 +54,7 @@ let layercvaOrigin = new TileLayer({
     })
     });
 
+//创建天地图图层（原始未变暗黑色，使用WMTS）
 let layertianditu = new TileLayer({
     opacity: 0.7,
     source: new WMTS({
@@ -146,31 +76,34 @@ let layertianditu = new TileLayer({
     })
 })
 
-
-let home_point = new TileLayer({
-    opacity: 0.7,
-    source: new TileWMS({
-        attributions:
-          'Tiles © <a href="https://mrdata.usgs.gov/geology/state/"' +
-          ' target="_blank">USGS</a>',
-        url: "http://localhost:8888/geoserver/home/wms",
-        params: {
-            LAYERS: 'home:transform'
-        },
-        layer: "vec",
-        matrixSet: "w",
-        format: "tiles",
-        projection: projection,
-        tileGrid: new WMTSTileGrid({
-            origin: getTopLeft(projectionExtent),
-            resolutions: resolutions,
-            matrixIds: matrixIds
-        }),
-        style: "default",
-        wrapX: true
-    })
+let wmsSource = new TileWMS({
+    attributions:
+      'Tiles © <a href="https://mrdata.usgs.gov/geology/state/"' +
+      ' target="_blank">USGS</a>',
+    url: "http://localhost:8888/geoserver/home/wms",
+    params: {
+        LAYERS: 'home:home_all'
+    },
+    layer: "vec",
+    matrixSet: "w",
+    format: "tiles",
+    projection: projection,
+    tileGrid: new WMTSTileGrid({
+        origin: getTopLeft(projectionExtent),
+        resolutions: resolutions,
+        matrixIds: matrixIds
+    }),
+    style: "default",
+    wrapX: true
 })
 
+//创建行政区划geoserver图层
+let wmsLayer = new TileLayer({
+    opacity: 0.7,
+    source: wmsSource
+})
+
+//变色计算函数
 let reverseFunc = function (pixelsTemp) {
     //蓝色
     for (var i = 0; i < pixelsTemp.length; i += 4) {
@@ -191,7 +124,7 @@ let reverseFunc = function (pixelsTemp) {
     }
 };
 
-
+//创建变色source
 const raster = new RasterSource({
     sources: [
         //传入图层，这里是天地图矢量图或者天地图矢量注记
@@ -212,57 +145,124 @@ const raster = new RasterSource({
     }
 });
 
+//创建新图层，注意，必须使用 ImageLayer
 let darklayer = new ImageLayer({
     name:'ssss',
     source:raster,
 })
-//创建新图层，注意，必须使用 ImageLayer
 
+let view = new View({
+    projection: projection,
+    center: fromLonLat([105, 37]),
+    zoom: 5,
+    minZoom: 4
+})
+
+//创建地图map，添加变色图层、标注图层、geoserver行政区划图层
 let map_wmts = new Map({
     target: "map",
     layers:[
-        darklayer,
-        layercvaOrigin,
-        home_point
+        
+        wmsLayer
     ],
-    view: new View({
-        projection: projection,
-        center: fromLonLat([105, 37]),
-        zoom: 5
-    })
+    view: view
 })
 
 // map_wmts.addLayer(layertianditu)
 
 
+//添加外部图标注
 // var marker = require('./images/marker.png')
+// const iconStyle = new Style({
+//     image: new Icon({
+//         anchor: [0.5, 46],
+//         anchorXUnits: "fraction",
+//         anchorYUnits: "pixels",
+//         color: '#ffffff',
+//         src: marker
+//     }),
+// })
 
-
-
-const iconStyle = new Style({
-    image: new Icon({
-        anchor: [0.5, 46],
-        anchorXUnits: "fraction",
-        anchorYUnits: "pixels",
-        color: '#ffffff',
-        src: marker
-    }),
-})
-
-var feature = new Feature({
-    geometry: new Point(fromLonLat([113.457278740096,34.6734005]))
-        // img: new Icon({
-        //     anchor: [0.5, 46],
-        //     src: 'https://images.xiaozhuanlan.com/photo/2020/af4d72639f0ff7e0599c9d3935b123af.png'
-        // })
-})
-feature.setStyle(iconStyle)
-var source = new VectorSource({
-    features: [feature]
-})
+// var feature = new Feature({
+//     geometry: new Point(fromLonLat([113.457278740096,34.6734005]))
+//         // img: new Icon({
+//         //     anchor: [0.5, 46],
+//         //     src: 'https://images.xiaozhuanlan.com/photo/2020/af4d72639f0ff7e0599c9d3935b123af.png'
+//         // })
+// })
+// feature.setStyle(iconStyle)
+// var source = new VectorSource({
+//     features: [feature]
+// })
     
-var layer = new VectorLayer({
-    source: source
-})
+// var layer = new VectorLayer({
+//     source: source
+// })
 // map_wmts.addLayer(layer)
 // map_wmts.addLayer(home_point)
+
+//创建高亮style
+// const selectStyle = new Style({
+//     fill: new Fill({
+//         color: '#eeeeee'
+//     }),
+//     stroke: new Stroke({
+//         color: 'rgba(255,255,255,0.7)',
+//         width: 2
+//     })
+// })
+
+// //创建一个是否选择的变量
+// let selected = null
+// const status = document.getElementById('info');
+// map_wmts.on('pointermove', function (e) {
+//     if (selected !== null) {
+//       selected.setStyle(undefined);
+//       selected = null;
+//     }
+  
+//     map_wmts.forEachFeatureAtPixel(e.pixel, function (f) {
+//       selected = f;
+//       selectStyle.getFill().setColor(f.get('COLOR') || '#eeeeee');
+//       f.setStyle(selectStyle);
+//       return true;
+//     });
+  
+//     if (selected) {
+//       status.innerHTML = '&bb';
+//     } else {
+//       status.innerHTML = '&aa';
+//     }
+//   });
+
+//   http://localhost:8888/geoserver/home/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=home%3Achina&LAYERS=home%3Achina&exceptions=application%2Fvnd.ogc.se_inimage&INFO_FORMAT=text%2Fhtml&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX=9916650.025842065%2C1449333.7033324032%2C10903721.712607449%2C2436405.390097786
+//   http://localhost:8888/geoserver/home/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=home%3Achina&LAYERS=home%3Achina&exceptions=application%2Fvnd.ogc.se_inimage&INFO_FORMAT=text%2Fhtml&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX=10862675.047918046%2C2457906.2299157795%2C11849746.73468343%2C3444977.9166811625
+
+
+map_wmts.on('singleclick', function (evt) {
+    document.getElementById('info').innerHTML = '';
+    const viewResolution = /** @type {number} */ (view.getResolution());
+    const url = wmsSource.getFeatureInfoUrl(
+      evt.coordinate,
+      viewResolution,
+      'EPSG:3857',
+      {'INFO_FORMAT': 'text/html'}
+    );
+    if (url) {
+      fetch(url)
+        .then((response) => response.text())
+        .then((html) => {
+            document.getElementById('info').innerHTML = html;
+        });
+    }
+  });
+
+map_wmts.on('pointermove', function (evt) {
+    if (evt.dragging) {
+      return;
+    }
+    const data = wmsLayer.getData(evt.pixel);
+    console.log(data);
+    const hit = data && data[3] > 0; // transparent pixels have zero for data[3]
+    map_wmts.getTargetElement().style.cursor = hit ? 'pointer' : '';
+})
