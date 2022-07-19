@@ -17,6 +17,7 @@ import VectorContext from 'ol/render/VectorContext';
 import {Raster as RasterSource} from 'ol/source'
 import ImageLayer from 'ol/layer/Image';
 import WMSGetFeatureInfo from 'ol/format/WMSGetFeatureInfo';
+import GeoJSON from 'ol/format/GeoJSON';
 
 
 
@@ -81,19 +82,9 @@ let wmsSource = new TileWMS({
       'Tiles © <a href="https://mrdata.usgs.gov/geology/state/"' +
       ' target="_blank">USGS</a>',
     url: "http://localhost:8888/geoserver/home/wms",
-    params: {
-        LAYERS: 'home:home_all'
-    },
-    layer: "vec",
-    matrixSet: "w",
-    format: "tiles",
-    projection: projection,
-    tileGrid: new WMTSTileGrid({
-        origin: getTopLeft(projectionExtent),
-        resolutions: resolutions,
-        matrixIds: matrixIds
-    }),
-    style: "default",
+    params: {'LAYERS': 'home:home_all', 'TILED': true},
+    serverType: 'geoserver',
+    crossOrigin: 'anonymous',
     wrapX: true
 })
 
@@ -158,17 +149,7 @@ let view = new View({
     minZoom: 4
 })
 
-//创建地图map，添加变色图层、标注图层、geoserver行政区划图层
-let map_wmts = new Map({
-    target: "map",
-    layers:[
-        
-        wmsLayer
-    ],
-    view: view
-})
 
-// map_wmts.addLayer(layertianditu)
 
 
 //添加外部图标注
@@ -201,44 +182,125 @@ let map_wmts = new Map({
 // map_wmts.addLayer(layer)
 // map_wmts.addLayer(home_point)
 
+const vector_province = new VectorLayer({
+    source: new VectorSource({
+      url: 'http://localhost:8888/geoserver/home/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=home%3Aprovince&maxFeatures=50&outputFormat=application%2Fjson',
+      format: new GeoJSON(),
+    }),
+    style: new Style({
+        fill: new Fill({
+            color: '#e5b636',
+            
+        }),
+        stroke: new Stroke({
+            color: '#4577e7',
+            width: 2
+        }),
+        
+    }),
+    opacity: 0.7,
+    maxResolution:2500000
+  });
+
+
+const vector_city = new VectorLayer({
+    source: new VectorSource({
+      url: 'http://localhost:8888/geoserver/home/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=home%3Acity&maxFeatures=50&outputFormat=application%2Fjson',
+      format: new GeoJSON(),
+    }),
+    style: new Style({
+        fill: new Fill({
+            color: '#e5b636',
+            
+        }),
+        stroke: new Stroke({
+            color: '#4577e7',
+            width: 2
+        }),
+        
+    }),
+    opacity: 0.7,
+    minResolution:2500000,
+    maxResolution:10000000
+});
+
+
+const vector_region = new VectorLayer({
+    source: new VectorSource({
+      url: 'http://localhost:8888/geoserver/home/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=home%3Aregion&maxFeatures=50&outputFormat=application%2Fjson',
+      format: new GeoJSON(),
+    }),
+    style: new Style({
+        fill: new Fill({
+            color: '#e5b636',
+            
+        }),
+        stroke: new Stroke({
+            color: '#4577e7',
+            width: 2
+        }),
+        
+    }),
+    opacity: 0.7,
+    minResolution:0,
+    maxResolution:2500000,
+    
+});
+
+//创建地图map，添加变色图层、标注图层、geoserver行政区划图层
+let map_wmts = new Map({
+    target: "map",
+    layers:[
+        darklayer,
+        vector_province,
+        vector_city,
+        // vector_region,
+        wmsLayer,
+        layercvaOrigin
+    ],
+    view: view
+})
+
+
 //创建高亮style
-// const selectStyle = new Style({
-//     fill: new Fill({
-//         color: '#eeeeee'
-//     }),
-//     stroke: new Stroke({
-//         color: 'rgba(255,255,255,0.7)',
-//         width: 2
-//     })
-// })
+const selectStyle = new Style({
+    fill: new Fill({
+        color: '#e5b636'
+    }),
+    stroke: new Stroke({
+        color: '#4577e7',
+        width: 1
+    })
+})
 
 // //创建一个是否选择的变量
-// let selected = null
-// const status = document.getElementById('info');
-// map_wmts.on('pointermove', function (e) {
-//     if (selected !== null) {
-//       selected.setStyle(undefined);
-//       selected = null;
-//     }
-  
-//     map_wmts.forEachFeatureAtPixel(e.pixel, function (f) {
-//       selected = f;
-//       selectStyle.getFill().setColor(f.get('COLOR') || '#eeeeee');
-//       f.setStyle(selectStyle);
-//       return true;
-//     });
-  
-//     if (selected) {
-//       status.innerHTML = '&bb';
-//     } else {
-//       status.innerHTML = '&aa';
-//     }
-//   });
+const status = document.getElementById('status');
+
+let selected = null;
+map_wmts.on('pointermove', function (e) {
+  if (selected !== null) {
+    selected.setStyle(undefined);
+    selected = null;
+  }
+
+  map_wmts.forEachFeatureAtPixel(e.pixel, function (f) {
+    selected = f;
+    selectStyle.getFill().setColor(f.get('COLOR') || '#edcd75');
+    f.setStyle(selectStyle);
+    return true;
+  });
+
+  if (selected) {
+    status.innerHTML = selected.get('name');
+  } else {
+    status.innerHTML = '&nbsp;';
+  }
+});
 
 //   http://localhost:8888/geoserver/home/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=home%3Achina&LAYERS=home%3Achina&exceptions=application%2Fvnd.ogc.se_inimage&INFO_FORMAT=text%2Fhtml&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX=9916650.025842065%2C1449333.7033324032%2C10903721.712607449%2C2436405.390097786
 //   http://localhost:8888/geoserver/home/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=home%3Achina&LAYERS=home%3Achina&exceptions=application%2Fvnd.ogc.se_inimage&INFO_FORMAT=text%2Fhtml&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX=10862675.047918046%2C2457906.2299157795%2C11849746.73468343%2C3444977.9166811625
 
-
+//http://localhost:8888/geoserver/home/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=home%3Aregion&CODE_SH=540000&STYLES&LAYERS=home%3Aregion&exceptions=application%2Fvnd.ogc.se_inimage&INFO_FORMAT=text%2Fhtml&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A3857&WIDTH=101&HEIGHT=101&BBOX=12944321.278423259%2C2270264.7602612223%2C13931392.965188643%2C3257336.4470266053
 map_wmts.on('singleclick', function (evt) {
     document.getElementById('info').innerHTML = '';
     const viewResolution = /** @type {number} */ (view.getResolution());
@@ -253,6 +315,7 @@ map_wmts.on('singleclick', function (evt) {
         .then((response) => response.text())
         .then((html) => {
             document.getElementById('info').innerHTML = html;
+            
         });
     }
   });
@@ -262,7 +325,9 @@ map_wmts.on('pointermove', function (evt) {
       return;
     }
     const data = wmsLayer.getData(evt.pixel);
-    console.log(data);
     const hit = data && data[3] > 0; // transparent pixels have zero for data[3]
     map_wmts.getTargetElement().style.cursor = hit ? 'pointer' : '';
 })
+
+
+
