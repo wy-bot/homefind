@@ -82,7 +82,7 @@ let wmsSource = new TileWMS({
       'Tiles © <a href="https://mrdata.usgs.gov/geology/state/"' +
       ' target="_blank">USGS</a>',
     url: "http://localhost:8888/geoserver/home/wms",
-    params: {'LAYERS': 'home:home_all', 'TILED': true},
+    params: {'LAYERS': 'home:china', 'TILED': true},
     serverType: 'geoserver',
     crossOrigin: 'anonymous',
     wrapX: true
@@ -91,7 +91,65 @@ let wmsSource = new TileWMS({
 //创建行政区划geoserver图层
 let wmsLayer = new TileLayer({
     opacity: 0.7,
-    source: wmsSource
+    source: wmsSource,
+    minZoom: 3,
+    maxZoom: 5
+})
+
+let wmsSource_province = new TileWMS({
+    attributions:
+      'Tiles © <a href="https://mrdata.usgs.gov/geology/state/"' +
+      ' target="_blank">USGS</a>',
+    url: "http://localhost:8888/geoserver/home/wms",
+    params: {'LAYERS': 'home:province', 'TILED': true},
+    serverType: 'geoserver',
+    crossOrigin: 'anonymous',
+    wrapX: true
+})
+
+//创建行政区划geoserver图层
+let wmsLayer_province = new TileLayer({
+    opacity: 0.7,
+    source: wmsSource_province,
+    minZoom: 5,
+    maxZoom: 8
+})
+
+let wmsSource_city = new TileWMS({
+    attributions:
+      'Tiles © <a href="https://mrdata.usgs.gov/geology/state/"' +
+      ' target="_blank">USGS</a>',
+    url: "http://localhost:8888/geoserver/home/wms",
+    params: {'LAYERS': 'home:city', 'TILED': true},
+    serverType: 'geoserver',
+    crossOrigin: 'anonymous',
+    wrapX: true
+})
+
+//创建行政区划geoserver图层
+let wmsLayer_city = new TileLayer({
+    opacity: 0.7,
+    source: wmsSource_city,
+    minZoom: 8,
+    maxZoom: 10
+})
+
+let wmsSource_region = new TileWMS({
+    attributions:
+      'Tiles © <a href="https://mrdata.usgs.gov/geology/state/"' +
+      ' target="_blank">USGS</a>',
+    url: "http://localhost:8888/geoserver/home/wms",
+    params: {'LAYERS': 'home:region', 'TILED': true},
+    serverType: 'geoserver',
+    crossOrigin: 'anonymous',
+    wrapX: true
+})
+
+//创建行政区划geoserver图层
+let wmsLayer_region = new TileLayer({
+    opacity: 0.7,
+    source: wmsSource_region,
+    minZoom: 10
 })
 
 //变色计算函数
@@ -145,7 +203,7 @@ let darklayer = new ImageLayer({
 let view = new View({
     projection: projection,
     center: fromLonLat([105, 37]),
-    zoom: 5,
+    zoom: 4.3,
     minZoom: 4
 })
 
@@ -199,13 +257,14 @@ const vector_province = new VectorLayer({
         
     }),
     opacity: 0.7,
-    maxResolution:2500000
+    minZoom: 5,
+    maxZoom: 8
   });
 
 
 const vector_city = new VectorLayer({
     source: new VectorSource({
-      url: 'http://localhost:8888/geoserver/home/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=home%3Acity&maxFeatures=50&outputFormat=application%2Fjson',
+      url: 'http://localhost:8888/geoserver/home/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=home%3Acity&outputFormat=application%2Fjson',
       format: new GeoJSON(),
     }),
     style: new Style({
@@ -220,14 +279,14 @@ const vector_city = new VectorLayer({
         
     }),
     opacity: 0.7,
-    minResolution:2500000,
-    maxResolution:10000000
+    minZoom: 8,
+    maxZoom: 10
 });
 
 
 const vector_region = new VectorLayer({
     source: new VectorSource({
-      url: 'http://localhost:8888/geoserver/home/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=home%3Aregion&maxFeatures=50&outputFormat=application%2Fjson',
+      url: 'http://localhost:8888/geoserver/home/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=home%3Aregion&outputFormat=application%2Fjson&FeatureID=region.2657,region.2658',
       format: new GeoJSON(),
     }),
     style: new Style({
@@ -242,8 +301,7 @@ const vector_region = new VectorLayer({
         
     }),
     opacity: 0.7,
-    minResolution:0,
-    maxResolution:2500000,
+    minZoom: 10,
     
 });
 
@@ -254,13 +312,49 @@ let map_wmts = new Map({
         darklayer,
         vector_province,
         vector_city,
-        // vector_region,
+        vector_region,
         wmsLayer,
+        wmsLayer_province,
+        wmsLayer_city,
+        wmsLayer_region,
         layercvaOrigin
     ],
     view: view
 })
 
+// map_wmts.on('moveend',checkZoom)
+// function checkZoom(){
+//     const extent = view.calculateExtent(map_wmts.getSize())
+//     var vector_region = null
+//     if(view.getZoom()>10){
+//         console.log(extent);
+//         if(vector_region != null){
+//             map_wmts.removeLayer(vector_region)
+//         }
+//         vector_region = new VectorLayer({
+//             source: new VectorSource({
+//               url: 'http://localhost:8888/geoserver/home/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=home%3Aregion&outputFormat=application%2Fjson',
+//               format: new GeoJSON(),
+//             }),
+//             style: new Style({
+//                 fill: new Fill({
+//                     color: '#e5b636',
+                    
+//                 }),
+//                 stroke: new Stroke({
+//                     color: '#4577e7',
+//                     width: 2
+//                 }),
+                
+//             }),
+//             opacity: 0.7,
+//             minZoom: 10,
+//             extent: extent
+//         });
+//         map_wmts.addLayer(vector_region)
+//         // return vector_region
+//     }
+// }
 
 //创建高亮style
 const selectStyle = new Style({
@@ -295,6 +389,43 @@ map_wmts.on('pointermove', function (e) {
   } else {
     status.innerHTML = '&nbsp;';
   }
+
+  
+  if(view.getZoom()>3&&view.getZoom()<=5){
+    if (e.dragging) {
+        return;
+      }
+    const data = wmsLayer.getData(e.pixel);
+    const hit = data && data[3] > 0; // transparent pixels have zero for data[3]
+    map_wmts.getTargetElement().style.cursor = hit ? 'pointer' : '';
+  }
+
+  if(view.getZoom()>5&&view.getZoom()<=8){
+    if (e.dragging) {
+        return;
+      }
+    const data = wmsLayer_province.getData(e.pixel);
+    const hit = data && data[3] > 0; // transparent pixels have zero for data[3]
+    map_wmts.getTargetElement().style.cursor = hit ? 'pointer' : '';
+  }
+
+  if(view.getZoom()>8&&view.getZoom()<=10){
+    if (e.dragging) {
+        return;
+      }
+    const data = wmsLayer_city.getData(e.pixel);
+    const hit = data && data[3] > 0; // transparent pixels have zero for data[3]
+    map_wmts.getTargetElement().style.cursor = hit ? 'pointer' : '';
+  }
+
+  if(view.getZoom()>10){
+    if (e.dragging) {
+        return;
+      }
+    const data = wmsLayer_region.getData(e.pixel);
+    const hit = data && data[3] > 0; // transparent pixels have zero for data[3]
+    map_wmts.getTargetElement().style.cursor = hit ? 'pointer' : '';
+  }
 });
 
 //   http://localhost:8888/geoserver/home/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=home%3Achina&LAYERS=home%3Achina&exceptions=application%2Fvnd.ogc.se_inimage&INFO_FORMAT=text%2Fhtml&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX=9916650.025842065%2C1449333.7033324032%2C10903721.712607449%2C2436405.390097786
@@ -304,30 +435,77 @@ map_wmts.on('pointermove', function (e) {
 map_wmts.on('singleclick', function (evt) {
     document.getElementById('info').innerHTML = '';
     const viewResolution = /** @type {number} */ (view.getResolution());
-    const url = wmsSource.getFeatureInfoUrl(
-      evt.coordinate,
-      viewResolution,
-      'EPSG:3857',
-      {'INFO_FORMAT': 'text/html'}
-    );
-    if (url) {
-      fetch(url)
-        .then((response) => response.text())
-        .then((html) => {
-            document.getElementById('info').innerHTML = html;
-            
-        });
+    if(view.getZoom()>3&&view.getZoom()<=5){
+        const url = wmsSource.getFeatureInfoUrl(
+            evt.coordinate,
+            viewResolution,
+            'EPSG:3857',
+            {'INFO_FORMAT': 'text/html'}
+          );
+          if (url) {
+            fetch(url)
+              .then((response) => response.text())
+              .then((html) => {
+                  document.getElementById('info').innerHTML = html;
+                  
+              });
+          }
+    }
+    if(view.getZoom()>5&&view.getZoom()<=8){
+        const url = wmsSource_province.getFeatureInfoUrl(
+            evt.coordinate,
+            viewResolution,
+            'EPSG:3857',
+            {'INFO_FORMAT': 'text/html'}
+          );
+          if (url) {
+            fetch(url)
+              .then((response) => response.text())
+              .then((html) => {
+                  document.getElementById('info').innerHTML = html;
+                  
+              });
+          }
+    }
+    if(view.getZoom()>8&&view.getZoom()<=10){
+        const url = wmsSource_city.getFeatureInfoUrl(
+            evt.coordinate,
+            viewResolution,
+            'EPSG:3857',
+            {'INFO_FORMAT': 'text/html'}
+          );
+          if (url) {
+            fetch(url)
+              .then((response) => response.text())
+              .then((html) => {
+                  document.getElementById('info').innerHTML = html;
+                  
+              });
+          }
+    }
+    if(view.getZoom()>10){
+        const url = wmsSource_region.getFeatureInfoUrl(
+            evt.coordinate,
+            viewResolution,
+            'EPSG:3857',
+            {'INFO_FORMAT': 'text/html'}
+          );
+          if (url) {
+            fetch(url)
+              .then((response) => response.text())
+              .then((html) => {
+                  document.getElementById('info').innerHTML = html;
+                  
+              });
+          }
     }
   });
 
-map_wmts.on('pointermove', function (evt) {
-    if (evt.dragging) {
-      return;
-    }
-    const data = wmsLayer.getData(evt.pixel);
-    const hit = data && data[3] > 0; // transparent pixels have zero for data[3]
-    map_wmts.getTargetElement().style.cursor = hit ? 'pointer' : '';
-})
-
-
-
+// map_wmts.on('pointermove', function (evt) {
+//     if (evt.dragging) {
+//       return;
+//     }
+//     const data = wmsLayer.getData(evt.pixel);
+//     const hit = data && data[3] > 0; // transparent pixels have zero for data[3]
+//     map_wmts.getTargetElement().style.cursor = hit ? 'pointer' : '';
+// })
