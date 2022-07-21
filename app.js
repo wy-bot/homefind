@@ -6,7 +6,7 @@ import WMTS from 'ol/source/WMTS';
 import TileWMS from 'ol/source/TileWMS';
 import WMTSTileGrid from 'ol/tilegrid/WMTS';
 import {fromLonLat, get as getProjection, Projection} from 'ol/proj';
-import {getTopLeft,getWidth,getCenter} from 'ol/extent';
+import {getTopLeft,getWidth,getCenter,boundingExtent} from 'ol/extent';
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import VectorSource from 'ol/source/Vector';
@@ -676,12 +676,11 @@ map_wmts.on('singleclick', function (evt) {
 //     strategy: bboxStrategy,
 // })
 // console.log(centerpoint);
-const centerpoint =new VectorSource({
-    format: new GeoJSON(),
-    url: 'http://localhost:8888/geoserver/home/ows?service=WFS&version=1.1.0&request=GetFeature&typename=home:province&outputFormat=application/json&srsname=EPSG:3857',
-    
-    });
-map_wmts.on('postrender',function(){
+
+
+
+
+vector_province.on('postrender',function(){
     if(view.getZoom()>4.5&&view.getZoom()<=8){
     const extentall = view.calculateExtent(map_wmts.getSize())
     
@@ -690,10 +689,128 @@ map_wmts.on('postrender',function(){
     // .getFeaturesInExtent(extentall)
     // .filter((feature) => feature.getGeometry().intersectsExtent(extentall))
     // console.log(features);
-    const features = vectorsource_province
+    const feature_province = vectorsource_province
     .getFeaturesInExtent(extentall)
     .filter((feature) => feature.getGeometry().intersectsExtent(extentall))
-    console.log(features[1]);
+    var element_count = document.querySelectorAll('.element');
+      var marker_count = document.querySelectorAll('.marker');
+      if(element_count){
+        
+        map_wmts.getOverlays().clear()
+        for(let i=0;i<feature_province.length;i++){
+      
+      
+          var elementDiv = document.createElement('div');
+          elementDiv.className = 'element';
+          var markerDiv = document.createElement('div');
+          markerDiv.className = 'marker';
+          elementDiv.appendChild(markerDiv);
+          var addressDiv = document.createElement('a');
+          addressDiv.className = 'address';
+      
+          addressDiv.innerText = feature_province[i].get('name');
+        
+          // addressDiv.innerText = '标注点';
+          elementDiv.appendChild(addressDiv);
+          var overLayElement = document.getElementById('overLay');
+          overLayElement.appendChild(elementDiv);
+          
+          //实例化overlay标注，添加到地图容器中
+          var newOverlay = new Overlay({
+            position: getCenter(feature_province[i].getGeometry().flatCoordinates),
+            positioning: 'center-center',
+            element: elementDiv,
+            // stopEvent: false
+          });
+        
+          
+          map_wmts.addOverlay(newOverlay)
+        }
+      
+    }
+    // console.log(features[3].get('name'));
+    // console.log(features[3].getGeometry().flatCoordinates);
+    // console.log(getCenter(features[3].getGeometry().flatCoordinates));
+
+    // var elementDiv = document.createElement('div');
+    // var markerDiv = document.createElement('div');
+    // markerDiv.className = 'marker';
+    // elementDiv.appendChild(markerDiv);
+    // var addressDiv = document.createElement('a');
+    // addressDiv.className = 'address';
+    
+    // addressDiv.innerText = features[3].get('name');
+      
+    // // addressDiv.innerText = '标注点';
+    // elementDiv.appendChild(addressDiv);
+    // var overLayElement = document.getElementById('overLay');
+    // overLayElement.appendChild(elementDiv);
+    // //实例化overlay标注，添加到地图容器中
+    // var newOverlay = new Overlay({
+    //     position: getCenter(features[3].getGeometry().flatCoordinates),
+    //     positioning: 'center-center',
+    //     element: elementDiv,
+    //     // stopEvent: false
+    // });
+    
+    // map_wmts.addOverlay(newOverlay)
+
+    // var addressDiv2 = document.createElement('a');
+    // addressDiv2.className = 'address';
+    
+    // addressDiv2.innerText = features[2].get('name');
+      
+    // // addressDiv.innerText = '标注点';
+    // elementDiv.appendChild(addressDiv2);
+    // var overLayElement = document.getElementById('overLay');
+    // overLayElement.appendChild(elementDiv);
+    // //实例化overlay标注，添加到地图容器中
+    // var newOverlay2 = new Overlay({
+    //     position: getCenter(features[2].getGeometry().flatCoordinates),
+    //     positioning: 'center-center',
+    //     element: elementDiv,
+    //     // stopEvent: false
+    // });
+    // map_wmts.addOverlay(newOverlay2)
     }
 })
 
+
+// var point = [13618024.112759456, 4748961.400167575]
+// var feature = new Feature({
+//   geometry:new Point(point)
+// })
+// var sourceVector1 = new VectorSource({
+//   projection:projection,
+//   features:[feature]
+// })
+// var vectorlayer1 = new VectorLayer({
+//   source: sourceVector1
+// })
+// map_wmts.addLayer(vectorlayer1  )
+
+
+// map_wmts.on('moveend',function(){
+//     var elementDiv = document.createElement('div');
+//     var markerDiv = document.createElement('div');
+//     markerDiv.className = 'marker';
+//     elementDiv.appendChild(markerDiv);
+//     var addressDiv = document.createElement('a');
+//     addressDiv.className = 'address';
+    
+//     addressDiv.innerText = feature_province[3].get('name');
+//     console.log(feature_province[3]);  
+//     // addressDiv.innerText = '标注点';
+//     elementDiv.appendChild(addressDiv);
+//     var overLayElement = document.getElementById('overLay');
+//     overLayElement.appendChild(elementDiv);
+//     //实例化overlay标注，添加到地图容器中
+//     var newOverlay = new Overlay({
+//         position: getCenter(feature_province[3].getGeometry().flatCoordinates),
+//         positioning: 'center-center',
+//         element: elementDiv,
+//         // stopEvent: false
+//     });
+    
+//     map_wmts.addOverlay(newOverlay)
+// })
