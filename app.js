@@ -1,12 +1,12 @@
 import 'style-loader!css-loader!ol/ol.css';
-import {Map,View} from 'ol';
+import {Map,View,Overlay} from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import XYZ from 'ol/source/XYZ';
 import WMTS from 'ol/source/WMTS';
 import TileWMS from 'ol/source/TileWMS';
 import WMTSTileGrid from 'ol/tilegrid/WMTS';
 import {fromLonLat, get as getProjection, Projection} from 'ol/proj';
-import {getTopLeft,getWidth} from 'ol/extent';
+import {getTopLeft,getWidth,getCenter} from 'ol/extent';
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import VectorSource from 'ol/source/Vector';
@@ -18,7 +18,7 @@ import {Raster as RasterSource} from 'ol/source'
 import ImageLayer from 'ol/layer/Image';
 import WMSGetFeatureInfo from 'ol/format/WMSGetFeatureInfo';
 import GeoJSON from 'ol/format/GeoJSON';
-
+import {bbox as bboxStrategy} from 'ol/loadingstrategy';
 
 
 //设置坐标系，范围
@@ -93,7 +93,7 @@ let wmsLayer = new TileLayer({
     opacity: 0.7,
     source: wmsSource,
     minZoom: 3,
-    maxZoom: 5
+    maxZoom: 4.5
 })
 
 let wmsSource_province = new TileWMS({
@@ -111,7 +111,7 @@ let wmsSource_province = new TileWMS({
 let wmsLayer_province = new TileLayer({
     opacity: 0.7,
     source: wmsSource_province,
-    minZoom: 5,
+    minZoom: 4.5,
     maxZoom: 8
 })
 
@@ -240,11 +240,50 @@ let view = new View({
 // map_wmts.addLayer(layer)
 // map_wmts.addLayer(home_point)
 
-const vector_province = new VectorLayer({
-    source: new VectorSource({
-      url: 'http://localhost:8888/geoserver/home/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=home%3Aprovince&maxFeatures=50&outputFormat=application%2Fjson',
-      format: new GeoJSON(),
+//创建省市区矢量填充颜色style
+const vectorFillStyle = new Style({
+    fill: new Fill({
+        color: '#e5b636',
+        
     }),
+    stroke: new Stroke({
+        color: '#4577e7',
+        width: 2
+    })
+})
+
+//创建省市区标签style
+const labelStyle = new Style({
+    text: new Text({
+      font: '12px Calibri,sans-serif',
+      overflow: true,
+      fill: new Fill({
+        color: '#000',
+      }),
+      stroke: new Stroke({
+        color: '#fff',
+        width: 3,
+      }),
+    }),
+})
+
+const vectorStyle = [vectorFillStyle,labelStyle]
+const vectorsource_province = new VectorSource({
+    format: new GeoJSON(),
+    url: function (extent) {
+      return (
+        'http://localhost:8888/geoserver/home/ows?service=WFS&' +
+        'version=1.1.0&request=GetFeature&typename=home:province&' +
+        'outputFormat=application/json&srsname=EPSG:3857&' +
+        'bbox=' +
+        extent.join(',') +
+        ',EPSG:3857'
+      );
+    },
+    strategy: bboxStrategy,
+});
+const vector_province = new VectorLayer({
+    source: vectorsource_province,
     style: new Style({
         fill: new Fill({
             color: '#e5b636',
@@ -257,15 +296,25 @@ const vector_province = new VectorLayer({
         
     }),
     opacity: 0.7,
-    minZoom: 5,
+    minZoom: 4.5,
     maxZoom: 8
   });
 
 
 const vector_city = new VectorLayer({
     source: new VectorSource({
-      url: 'http://localhost:8888/geoserver/home/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=home%3Acity&outputFormat=application%2Fjson',
-      format: new GeoJSON(),
+        format: new GeoJSON(),
+        url: function (extent) {
+          return (
+            'http://localhost:8888/geoserver/home/ows?service=WFS&' +
+            'version=1.1.0&request=GetFeature&typename=home:city&' +
+            'outputFormat=application/json&srsname=EPSG:3857&' +
+            'bbox=' +
+            extent.join(',') +
+            ',EPSG:3857'
+          );
+        },
+        strategy: bboxStrategy,
     }),
     style: new Style({
         fill: new Fill({
@@ -286,8 +335,18 @@ const vector_city = new VectorLayer({
 
 const vector_region = new VectorLayer({
     source: new VectorSource({
-      url: 'http://localhost:8888/geoserver/home/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=home%3Aregion&outputFormat=application%2Fjson&FeatureID=region.2657,region.2658',
-      format: new GeoJSON(),
+        format: new GeoJSON(),
+        url: function (extent) {
+          return (
+            'http://localhost:8888/geoserver/home/ows?service=WFS&' +
+            'version=1.1.0&request=GetFeature&typename=home:region&' +
+            'outputFormat=application/json&srsname=EPSG:3857&' +
+            'bbox=' +
+            extent.join(',') +
+            ',EPSG:3857'
+          );
+        },
+        strategy: bboxStrategy,
     }),
     style: new Style({
         fill: new Fill({
@@ -302,7 +361,7 @@ const vector_region = new VectorLayer({
     }),
     opacity: 0.7,
     minZoom: 10,
-    
+    strategy: bboxStrategy,
 });
 
 //创建地图map，添加变色图层、标注图层、geoserver行政区划图层
@@ -313,10 +372,10 @@ let map_wmts = new Map({
         vector_province,
         vector_city,
         vector_region,
-        wmsLayer,
-        wmsLayer_province,
-        wmsLayer_city,
-        wmsLayer_region,
+        // wmsLayer,
+        // wmsLayer_province,
+        // wmsLayer_city,
+        // wmsLayer_region,
         layercvaOrigin
     ],
     view: view
@@ -325,13 +384,35 @@ let map_wmts = new Map({
 // map_wmts.on('moveend',checkZoom)
 // function checkZoom(){
 //     const extent = view.calculateExtent(map_wmts.getSize())
-//     var vector_region = null
+//     var vector_region1 = null
 //     if(view.getZoom()>10){
 //         console.log(extent);
-//         if(vector_region != null){
-//             map_wmts.removeLayer(vector_region)
+//         if(vector_region1 != null){
+//             map_wmts.removeLayer(vector_region1)
+//             vector_region1 = new VectorLayer({
+//                 source: new VectorSource({
+//                   url: 'http://localhost:8888/geoserver/home/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=home%3Aregion&outputFormat=application%2Fjson',
+//                   format: new GeoJSON(),
+//                 }),
+//                 style: new Style({
+//                     fill: new Fill({
+//                         color: '#e5b636',
+                        
+//                     }),
+//                     stroke: new Stroke({
+//                         color: '#4577e7',
+//                         width: 2
+//                     }),
+                    
+//                 }),
+//                 opacity: 0.7,
+//                 minZoom: 10,
+//                 extent: extent
+//             });
+//             map_wmts.addLayer(vector_region1)
+//             return vector_region1
 //         }
-//         vector_region = new VectorLayer({
+//         vector_region1 = new VectorLayer({
 //             source: new VectorSource({
 //               url: 'http://localhost:8888/geoserver/home/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=home%3Aregion&outputFormat=application%2Fjson',
 //               format: new GeoJSON(),
@@ -351,7 +432,8 @@ let map_wmts = new Map({
 //             minZoom: 10,
 //             extent: extent
 //         });
-//         map_wmts.addLayer(vector_region)
+//         map_wmts.addLayer(vector_region1)
+//         return vector_region1
 //         // return vector_region
 //     }
 // }
@@ -390,42 +472,44 @@ map_wmts.on('pointermove', function (e) {
     status.innerHTML = '&nbsp;';
   }
 
-  
-  if(view.getZoom()>3&&view.getZoom()<=5){
-    if (e.dragging) {
-        return;
-      }
-    const data = wmsLayer.getData(e.pixel);
-    const hit = data && data[3] > 0; // transparent pixels have zero for data[3]
-    map_wmts.getTargetElement().style.cursor = hit ? 'pointer' : '';
-  }
+  const pixel = map_wmts.getEventPixel(e.originalEvent);
+  const hit = map_wmts.hasFeatureAtPixel(pixel);
+  map_wmts.getTargetElement().style.cursor = hit ? 'pointer' : '';
+//   if(view.getZoom()>3&&view.getZoom()<=5){
+//     if (e.dragging) {
+//         return;
+//       }
+//     const data = wmsLayer.getData(e.pixel);
+//     const hit = data && data[3] > 0; // transparent pixels have zero for data[3]
+//     map_wmts.getTargetElement().style.cursor = hit ? 'pointer' : '';
+//   }
 
-  if(view.getZoom()>5&&view.getZoom()<=8){
-    if (e.dragging) {
-        return;
-      }
-    const data = wmsLayer_province.getData(e.pixel);
-    const hit = data && data[3] > 0; // transparent pixels have zero for data[3]
-    map_wmts.getTargetElement().style.cursor = hit ? 'pointer' : '';
-  }
+//   if(view.getZoom()>5&&view.getZoom()<=8){
+//     if (e.dragging) {
+//         return;
+//       }
+//     const data = wmsLayer_province.getData(e.pixel);
+//     const hit = data && data[3] > 0; // transparent pixels have zero for data[3]
+//     map_wmts.getTargetElement().style.cursor = hit ? 'pointer' : '';
+//   }
 
-  if(view.getZoom()>8&&view.getZoom()<=10){
-    if (e.dragging) {
-        return;
-      }
-    const data = wmsLayer_city.getData(e.pixel);
-    const hit = data && data[3] > 0; // transparent pixels have zero for data[3]
-    map_wmts.getTargetElement().style.cursor = hit ? 'pointer' : '';
-  }
+//   if(view.getZoom()>8&&view.getZoom()<=10){
+//     if (e.dragging) {
+//         return;
+//       }
+//     const data = wmsLayer_city.getData(e.pixel);
+//     const hit = data && data[3] > 0; // transparent pixels have zero for data[3]
+//     map_wmts.getTargetElement().style.cursor = hit ? 'pointer' : '';
+//   }
 
-  if(view.getZoom()>10){
-    if (e.dragging) {
-        return;
-      }
-    const data = wmsLayer_region.getData(e.pixel);
-    const hit = data && data[3] > 0; // transparent pixels have zero for data[3]
-    map_wmts.getTargetElement().style.cursor = hit ? 'pointer' : '';
-  }
+//   if(view.getZoom()>10){
+//     if (e.dragging) {
+//         return;
+//       }
+//     const data = wmsLayer_region.getData(e.pixel);
+//     const hit = data && data[3] > 0; // transparent pixels have zero for data[3]
+//     map_wmts.getTargetElement().style.cursor = hit ? 'pointer' : '';
+//   }
 });
 
 //   http://localhost:8888/geoserver/home/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=home%3Achina&LAYERS=home%3Achina&exceptions=application%2Fvnd.ogc.se_inimage&INFO_FORMAT=text%2Fhtml&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX=9916650.025842065%2C1449333.7033324032%2C10903721.712607449%2C2436405.390097786
@@ -435,7 +519,7 @@ map_wmts.on('pointermove', function (e) {
 map_wmts.on('singleclick', function (evt) {
     document.getElementById('info').innerHTML = '';
     const viewResolution = /** @type {number} */ (view.getResolution());
-    if(view.getZoom()>3&&view.getZoom()<=5){
+    if(view.getZoom()>3&&view.getZoom()<=4.5){
         const url = wmsSource.getFeatureInfoUrl(
             evt.coordinate,
             viewResolution,
@@ -451,7 +535,7 @@ map_wmts.on('singleclick', function (evt) {
               });
           }
     }
-    if(view.getZoom()>5&&view.getZoom()<=8){
+    if(view.getZoom()>4.5&&view.getZoom()<=8){
         const url = wmsSource_province.getFeatureInfoUrl(
             evt.coordinate,
             viewResolution,
@@ -509,3 +593,107 @@ map_wmts.on('singleclick', function (evt) {
 //     const hit = data && data[3] > 0; // transparent pixels have zero for data[3]
 //     map_wmts.getTargetElement().style.cursor = hit ? 'pointer' : '';
 // })
+
+
+//标注
+// var coordinate = evt.coordinate;        //鼠标单击的坐标
+//     //新增div元素
+//     var elementDiv = document.createElement('div');
+//     var markerDiv = document.createElement('div');
+//     markerDiv.className = 'marker';
+//     elementDiv.appendChild(markerDiv);
+//     var addressDiv = document.createElement('a');
+//     addressDiv.className = 'address';
+//     var labelText = null;
+//     map_wmts.forEachFeatureAtPixel(evt.pixel, function (f) {
+//         labelText = f;
+//         return true;
+//       });
+    
+//       if (labelText) {
+//         addressDiv.innerText = selected.get('name');
+//       } else {
+//         addressDiv.innerText = '&nbsp;';
+//       }
+//     // addressDiv.innerText = '标注点';
+//     elementDiv.appendChild(addressDiv);
+//     var overLayElement = document.getElementById('overLay');
+//     overLayElement.appendChild(elementDiv);
+//     //实例化overlay标注，添加到地图容器中
+//     var newOverlay = new Overlay({
+//         position: coordinate,
+//         positioning: 'center-center',
+//         element: elementDiv,
+//         // stopEvent: false
+//     });
+
+// map_wmts.on('click',function(evt){
+//     var coordinate = evt.coordinate;        //鼠标单击的坐标
+//     //新增div元素
+//     var elementDiv = document.createElement('div');
+//     var markerDiv = document.createElement('div');
+//     markerDiv.className = 'marker';
+//     elementDiv.appendChild(markerDiv);
+//     var addressDiv = document.createElement('a');
+//     addressDiv.className = 'address';
+//     var labelText = null;
+//     map_wmts.forEachFeatureAtPixel(evt.pixel, function (f) {
+//         labelText = f;
+//         return true;
+//       });
+    
+//       if (labelText) {
+//         addressDiv.innerText = selected.get('name');
+//       } else {
+//         addressDiv.innerText = '&nbsp;';
+//       }
+//     // addressDiv.innerText = '标注点';
+//     elementDiv.appendChild(addressDiv);
+//     var overLayElement = document.getElementById('overLay');
+//     overLayElement.appendChild(elementDiv);
+//     //实例化overlay标注，添加到地图容器中
+//     var newOverlay = new Overlay({
+//         position: labelText.center,
+//         positioning: 'center-center',
+//         element: elementDiv,
+//         // stopEvent: false
+//     });
+//     map_wmts.addOverlay(newOverlay)
+// })
+
+// const centerpoint =new VectorSource({
+//     format: new GeoJSON(),
+//     url: function (extent) {
+//       return (
+//         'http://localhost:8888/geoserver/home/ows?service=WFS&' +
+//         'version=1.1.0&request=GetFeature&typename=home:province&' +
+//         'outputFormat=application/json&srsname=EPSG:3857&' +
+//         'bbox=' +
+//         extent.join(',') +
+//         ',EPSG:3857'
+//       );
+//     },
+//     strategy: bboxStrategy,
+// })
+// console.log(centerpoint);
+const centerpoint =new VectorSource({
+    format: new GeoJSON(),
+    url: 'http://localhost:8888/geoserver/home/ows?service=WFS&version=1.1.0&request=GetFeature&typename=home:province&outputFormat=application/json&srsname=EPSG:3857',
+    
+    });
+map_wmts.on('postrender',function(){
+    if(view.getZoom()>4.5&&view.getZoom()<=8){
+    const extentall = view.calculateExtent(map_wmts.getSize())
+    
+    // console.log(extentall);
+    // const features = centerpoint
+    // .getFeaturesInExtent(extentall)
+    // .filter((feature) => feature.getGeometry().intersectsExtent(extentall))
+    // console.log(features);
+    const features = vectorsource_province
+    .getFeaturesInExtent(extentall)
+    .filter((feature) => feature.getGeometry().intersectsExtent(extentall))
+    console.log(features[1]);
+    }
+})
+
