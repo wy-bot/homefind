@@ -1,0 +1,1 @@
+select concat('{','"','city_code','"',': ','"',adcode,'"',',"','city','"',': ','"',name,'"',',"','province_code','"',': ','"',code_sh,'"',',"','province','"',': ','"',name_sh,'"',',"','pos','"',': {"lng": ',Lon,',"lng": ',Lat,'}}') from city where adcode = '110000'
