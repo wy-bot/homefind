@@ -13,7 +13,10 @@ import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 import {Icon, Stroke, Style, Fill} from 'ol/style';
 import marker from './images/marker.png';
-import dataList from './data/center.json';
+import dataList_province from './data/center.json';
+import dataList_city from './data/city.json';
+import dataList_region from './data/region.json';
+import dataList_count from './data/proerities-tree.json';
 import VectorContext from 'ol/render/VectorContext';
 import {Raster as RasterSource} from 'ol/source'
 import ImageLayer from 'ol/layer/Image';
@@ -269,6 +272,7 @@ const labelStyle = new Style({
 })
 
 const vectorStyle = [vectorFillStyle,labelStyle]
+
 const vectorsource_province = new VectorSource({
     format: new GeoJSON(),
     url: function (extent) {
@@ -302,21 +306,22 @@ const vector_province = new VectorLayer({
   });
 
 
+const vectorsource_city = new VectorSource({
+    format: new GeoJSON(),
+    url: function (extent) {
+      return (
+        'http://localhost:8888/geoserver/home/ows?service=WFS&' +
+        'version=1.1.0&request=GetFeature&typename=home:city&' +
+        'outputFormat=application/json&srsname=EPSG:3857&' +
+        'bbox=' +
+        extent.join(',') +
+        ',EPSG:3857'
+      );
+    },
+    strategy: bboxStrategy,
+});
 const vector_city = new VectorLayer({
-    source: new VectorSource({
-        format: new GeoJSON(),
-        url: function (extent) {
-          return (
-            'http://localhost:8888/geoserver/home/ows?service=WFS&' +
-            'version=1.1.0&request=GetFeature&typename=home:city&' +
-            'outputFormat=application/json&srsname=EPSG:3857&' +
-            'bbox=' +
-            extent.join(',') +
-            ',EPSG:3857'
-          );
-        },
-        strategy: bboxStrategy,
-    }),
+    source: vectorsource_city,
     style: new Style({
         fill: new Fill({
             color: '#e5b636',
@@ -334,21 +339,22 @@ const vector_city = new VectorLayer({
 });
 
 
+const vectorsource_region = new VectorSource({
+  format: new GeoJSON(),
+  url: function (extent) {
+    return (
+      'http://localhost:8888/geoserver/home/ows?service=WFS&' +
+      'version=1.1.0&request=GetFeature&typename=home:region&' +
+      'outputFormat=application/json&srsname=EPSG:3857&' +
+      'bbox=' +
+      extent.join(',') +
+      ',EPSG:3857'
+    );
+  },
+  strategy: bboxStrategy,
+});
 const vector_region = new VectorLayer({
-    source: new VectorSource({
-        format: new GeoJSON(),
-        url: function (extent) {
-          return (
-            'http://localhost:8888/geoserver/home/ows?service=WFS&' +
-            'version=1.1.0&request=GetFeature&typename=home:region&' +
-            'outputFormat=application/json&srsname=EPSG:3857&' +
-            'bbox=' +
-            extent.join(',') +
-            ',EPSG:3857'
-          );
-        },
-        strategy: bboxStrategy,
-    }),
+    source: vectorsource_region,
     style: new Style({
         fill: new Fill({
             color: '#e5b636',
@@ -517,74 +523,74 @@ map_wmts.on('pointermove', function (e) {
 //   http://localhost:8888/geoserver/home/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=home%3Achina&LAYERS=home%3Achina&exceptions=application%2Fvnd.ogc.se_inimage&INFO_FORMAT=text%2Fhtml&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX=10862675.047918046%2C2457906.2299157795%2C11849746.73468343%2C3444977.9166811625
 
 //http://localhost:8888/geoserver/home/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=home%3Aregion&CODE_SH=540000&STYLES&LAYERS=home%3Aregion&exceptions=application%2Fvnd.ogc.se_inimage&INFO_FORMAT=text%2Fhtml&FEATURE_COUNT=50&X=50&Y=50&SRS=EPSG%3A3857&WIDTH=101&HEIGHT=101&BBOX=12944321.278423259%2C2270264.7602612223%2C13931392.965188643%2C3257336.4470266053
-map_wmts.on('singleclick', function (evt) {
-    document.getElementById('info').innerHTML = '';
-    const viewResolution = /** @type {number} */ (view.getResolution());
-    if(view.getZoom()>3&&view.getZoom()<=4.5){
-        const url = wmsSource.getFeatureInfoUrl(
-            evt.coordinate,
-            viewResolution,
-            'EPSG:3857',
-            {'INFO_FORMAT': 'text/html'}
-          );
-          if (url) {
-            fetch(url)
-              .then((response) => response.text())
-              .then((html) => {
-                  document.getElementById('info').innerHTML = html;
+// map_wmts.on('singleclick', function (evt) {
+//     document.getElementById('info').innerHTML = '';
+//     const viewResolution = /** @type {number} */ (view.getResolution());
+//     if(view.getZoom()>3&&view.getZoom()<=4.5){
+//         const url = wmsSource.getFeatureInfoUrl(
+//             evt.coordinate,
+//             viewResolution,
+//             'EPSG:3857',
+//             {'INFO_FORMAT': 'text/html'}
+//           );
+//           if (url) {
+//             fetch(url)
+//               .then((response) => response.text())
+//               .then((html) => {
+//                   document.getElementById('info').innerHTML = html;
                   
-              });
-          }
-    }
-    if(view.getZoom()>4.5&&view.getZoom()<=8){
-        const url = wmsSource_province.getFeatureInfoUrl(
-            evt.coordinate,
-            viewResolution,
-            'EPSG:3857',
-            {'INFO_FORMAT': 'text/html'}
-          );
-          if (url) {
-            fetch(url)
-              .then((response) => response.text())
-              .then((html) => {
-                  document.getElementById('info').innerHTML = html;
+//               });
+//           }
+//     }
+//     if(view.getZoom()>4.5&&view.getZoom()<=8){
+//         const url = wmsSource_province.getFeatureInfoUrl(
+//             evt.coordinate,
+//             viewResolution,
+//             'EPSG:3857',
+//             {'INFO_FORMAT': 'text/html'}
+//           );
+//           if (url) {
+//             fetch(url)
+//               .then((response) => response.text())
+//               .then((html) => {
+//                   document.getElementById('info').innerHTML = html;
                   
-              });
-          }
-    }
-    if(view.getZoom()>8&&view.getZoom()<=10){
-        const url = wmsSource_city.getFeatureInfoUrl(
-            evt.coordinate,
-            viewResolution,
-            'EPSG:3857',
-            {'INFO_FORMAT': 'text/html'}
-          );
-          if (url) {
-            fetch(url)
-              .then((response) => response.text())
-              .then((html) => {
-                  document.getElementById('info').innerHTML = html;
+//               });
+//           }
+//     }
+//     if(view.getZoom()>8&&view.getZoom()<=10){
+//         const url = wmsSource_city.getFeatureInfoUrl(
+//             evt.coordinate,
+//             viewResolution,
+//             'EPSG:3857',
+//             {'INFO_FORMAT': 'text/html'}
+//           );
+//           if (url) {
+//             fetch(url)
+//               .then((response) => response.text())
+//               .then((html) => {
+//                   document.getElementById('info').innerHTML = html;
                   
-              });
-          }
-    }
-    if(view.getZoom()>10){
-        const url = wmsSource_region.getFeatureInfoUrl(
-            evt.coordinate,
-            viewResolution,
-            'EPSG:3857',
-            {'INFO_FORMAT': 'text/html'}
-          );
-          if (url) {
-            fetch(url)
-              .then((response) => response.text())
-              .then((html) => {
-                  document.getElementById('info').innerHTML = html;
+//               });
+//           }
+//     }
+//     if(view.getZoom()>10){
+//         const url = wmsSource_region.getFeatureInfoUrl(
+//             evt.coordinate,
+//             viewResolution,
+//             'EPSG:3857',
+//             {'INFO_FORMAT': 'text/html'}
+//           );
+//           if (url) {
+//             fetch(url)
+//               .then((response) => response.text())
+//               .then((html) => {
+//                   document.getElementById('info').innerHTML = html;
                   
-              });
-          }
-    }
-  });
+//               });
+//           }
+//     }
+//   });
 
 // map_wmts.on('pointermove', function (evt) {
 //     if (evt.dragging) {
@@ -681,7 +687,7 @@ map_wmts.on('singleclick', function (evt) {
 
 
 
-vector_province.on('postrender',function(){
+map_wmts.on('postrender',function(){
     if(view.getZoom()>4.5&&view.getZoom()<=8){
         
       const extentall = view.calculateExtent(map_wmts.getSize())
@@ -712,6 +718,140 @@ vector_province.on('postrender',function(){
           addressDiv.className = 'address';
           addressDiv.setAttribute('code',feature_province[i].get('adcode'));
           addressDiv.innerText = feature_province[i].get('name');
+          var addresscountDiv = document.createElement('span');
+          addresscountDiv.className = 'count';
+          // addressDiv.innerText = '标注点';
+          elementDiv.appendChild(addressDiv);
+          elementDiv.appendChild(addresscountDiv);
+          var overLayElement = document.getElementById('overLay');
+          overLayElement.appendChild(elementDiv);
+          
+          let centerpoint = [0,0]
+          for(let item of dataList_province){
+            const pointx = `${item.pos.lng}`;
+            const pointy = `${item.pos.lat}`;
+            if(`${item.province}` == feature_province[i].get('name')){
+                centerpoint[0] = pointx
+                centerpoint[1] = pointy
+                for (let item of dataList_count.children){
+                  if(`${item.name}` == feature_province[i].get('name')){
+                    addresscountDiv.innerText =  `${item.count}`
+                  }
+                }
+            }
+          }
+          //实例化overlay标注，添加到地图容器中
+          var newOverlay = new Overlay({
+            position: centerpoint,
+            positioning: 'center-center',
+            element: elementDiv,
+            // stopEvent: false
+          });
+        
+          
+          map_wmts.addOverlay(newOverlay)
+        }
+      }
+    }
+    if(view.getZoom()>8&&view.getZoom()<=10){
+        
+      const extentall = view.calculateExtent(map_wmts.getSize())
+    
+      // console.log(extentall);
+      // const features = centerpoint
+      // .getFeaturesInExtent(extentall)
+      // .filter((feature) => feature.getGeometry().intersectsExtent(extentall))
+      // console.log(features);
+      const feature_city = vectorsource_city
+      .getFeaturesInExtent(extentall)
+      .filter((feature) => feature.getGeometry().intersectsExtent(extentall))
+      var element_count = document.querySelectorAll('.element');
+      var marker_count = document.querySelectorAll('.marker');
+      
+      if(element_count){
+        
+        map_wmts.getOverlays().clear()
+        for(let i=0;i<feature_city.length;i++){
+      
+      
+          var elementDiv = document.createElement('div');
+          elementDiv.className = 'element';
+          var markerDiv = document.createElement('div');
+          markerDiv.className = 'marker';
+          elementDiv.appendChild(markerDiv);
+          var addressDiv = document.createElement('span');
+          addressDiv.className = 'address';
+          addressDiv.setAttribute('code',feature_city[i].get('adcode'));
+          addressDiv.innerText = feature_city[i].get('name');
+          var addresscountDiv = document.createElement('span');
+          addresscountDiv.className = 'count';
+          // addressDiv.innerText = '标注点';
+          elementDiv.appendChild(addressDiv);
+          elementDiv.appendChild(addresscountDiv);
+          var overLayElement = document.getElementById('overLay');
+          overLayElement.appendChild(elementDiv);
+          
+          let centerpoint = [0,0]
+          for(let item of dataList_city){
+            const pointx = `${item.pos.lng}`;
+            const pointy = `${item.pos.lat}`;
+            if(`${item.city_code}` == feature_city[i].get('adcode')){
+                centerpoint[0] = pointx
+                centerpoint[1] = pointy
+                for (let item of dataList_count.children){
+                  if(`${item.name}` == feature_city[i].get('name_sh')){
+                    for(let items of item.children){
+                      if(`${items.name}` == feature_city[i].get('name')){
+                        addresscountDiv.innerText = `${items.count}`
+                      }
+                    }
+                  }
+                }
+            }
+          }
+          //实例化overlay标注，添加到地图容器中
+          var newOverlay = new Overlay({
+            position: centerpoint,
+            positioning: 'center-center',
+            element: elementDiv,
+            // stopEvent: false
+          });
+        
+          
+          map_wmts.addOverlay(newOverlay)
+        }
+      }
+    }
+    if(view.getZoom()>10){
+        
+      const extentall = view.calculateExtent(map_wmts.getSize())
+    
+      // console.log(extentall);
+      // const features = centerpoint
+      // .getFeaturesInExtent(extentall)
+      // .filter((feature) => feature.getGeometry().intersectsExtent(extentall))
+      // console.log(features);
+      const feature_region = vectorsource_region
+      .getFeaturesInExtent(extentall)
+      .filter((feature) => feature.getGeometry().intersectsExtent(extentall))
+      var element_count = document.querySelectorAll('.element');
+      var marker_count = document.querySelectorAll('.marker');
+      
+      if(element_count){
+        
+        map_wmts.getOverlays().clear()
+        for(let i=0;i<feature_region.length;i++){
+      
+      
+          var elementDiv = document.createElement('div');
+          elementDiv.className = 'element';
+          var markerDiv = document.createElement('div');
+          markerDiv.className = 'marker';
+          elementDiv.appendChild(markerDiv);
+          var addressDiv = document.createElement('span');
+          addressDiv.className = 'address';
+          addressDiv.setAttribute('code',feature_region[i].get('adcode'));
+          addressDiv.innerText = feature_region[i].get('name');
         
           // addressDiv.innerText = '标注点';
           elementDiv.appendChild(addressDiv);
@@ -719,10 +859,10 @@ vector_province.on('postrender',function(){
           overLayElement.appendChild(elementDiv);
           
           let centerpoint = [0,0]
-          for(let item of dataList){
+          for(let item of dataList_region){
             const pointx = `${item.pos.lng}`;
             const pointy = `${item.pos.lat}`;
-            if(`${item.province}` == feature_province[i].get('name')){
+            if(`${item.region_code}` == feature_region[i].get('adcode')){
                 centerpoint[0] = pointx
                 centerpoint[1] = pointy
                 
@@ -787,3 +927,14 @@ map_wmts.on('postrender',function(){
     
 //     map_wmts.addOverlay(newOverlay)
 // })
+
+
+map_wmts.on('singleclick',function(evt){
+  let selected = null;
+  map_wmts.forEachFeatureAtPixel(evt.pixel,function(f){
+    selected = f;
+    let point = selected.getGeometry();
+    view.fit(point)
+  })
+
+})
