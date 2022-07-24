@@ -22,6 +22,12 @@ import {Raster as RasterSource} from 'ol/source'
 import ImageLayer from 'ol/layer/Image';
 import WMSGetFeatureInfo from 'ol/format/WMSGetFeatureInfo';
 import GeoJSON from 'ol/format/GeoJSON';
+import WFS from 'ol/format/WFS';
+import {
+  and as andFilter,
+  equalTo as equalToFilter,
+  like as likeFilter,
+} from 'ol/format/filter';
 import {bbox as bboxStrategy} from 'ol/loadingstrategy';
 
 
@@ -371,6 +377,44 @@ const vector_region = new VectorLayer({
     strategy: bboxStrategy,
 });
 
+
+const vectorsource_city_click = new VectorSource();
+const vector_city_click = new VectorLayer({
+  source: vectorsource_city_click,
+  style: new Style({
+      fill: new Fill({
+          color: '#ff6600',
+          
+      }),
+      stroke: new Stroke({
+          color: '#4577e7',
+          width: 2
+      }),
+      
+  }),
+  opacity: 0.7,
+  minZoom: 8,
+  maxZoom: 10
+});
+
+const vectorsource_region_click = new VectorSource();
+const vector_region_click = new VectorLayer({
+    source: vectorsource_region_click,
+    style: new Style({
+        fill: new Fill({
+            color: '#ff6600',
+            
+        }),
+        stroke: new Stroke({
+            color: '#4577e7',
+            width: 2
+        }),
+        
+    }),
+    opacity: 0.7,
+    minZoom: 10,
+    strategy: bboxStrategy,
+});
 //创建地图map，添加变色图层、标注图层、geoserver行政区划图层
 let map_wmts = new Map({
     target: "map",
@@ -452,7 +496,7 @@ const selectStyle = new Style({
     }),
     stroke: new Stroke({
         color: '#4577e7',
-        width: 1
+        width: 2
     })
 })
 
@@ -468,8 +512,10 @@ map_wmts.on('pointermove', function (e) {
 
   map_wmts.forEachFeatureAtPixel(e.pixel, function (f) {
     selected = f;
-    selectStyle.getFill().setColor(f.get('COLOR') || '#edcd75');
+    
+    selectStyle.getFill().setColor(f.get('COLOR') || '#ff9900');
     f.setStyle(selectStyle);
+    
     return true;
   });
 
@@ -931,10 +977,181 @@ map_wmts.on('postrender',function(){
 
 map_wmts.on('singleclick',function(evt){
   let selected = null;
-  map_wmts.forEachFeatureAtPixel(evt.pixel,function(f){
-    selected = f;
-    let point = selected.getGeometry();
-    view.fit(point)
+  const selectStyle = new Style({
+    fill: new Fill({
+      color: '#ff0000'
+    }),
+    stroke: new Stroke({
+      color: '#4577e7',
+      width: 2
+    })
   })
+  var zoom = null
+  if(view.getZoom()>4.5&&view.getZoom()<8){
+    zoom = null
+    map_wmts.removeLayer(vector_city_click)
+    map_wmts.forEachFeatureAtPixel(evt.pixel,function(f){
+      selected = f;
+      let point = selected.getGeometry();
+    
+      view.fit(point)
+      view.setZoom(8.01)
+      const adcode = f.get('adcode')
+      console.log(adcode);
+      // setTimeout(() => {
+      //   aa()
+      // }, 100);
+      const featureRequest = new WFS().writeGetFeature({
+        srsName: 'EPSG:3857',
+        featureNS: 'http://localhost:8888/geoserver/home',
+        featurePrefix: 'home',
+        featureTypes: ['city'],
+        outputFormat: 'application/json',
+        filter: equalToFilter('code_sh', adcode)
+      });
+      fetch('http://localhost:8888/geoserver/home/ows?service=WFS', {
+        method: 'POST',
+        body: new XMLSerializer().serializeToString(featureRequest),
+      })
+        .then(response=>{
+          return response.json();
+        })
+        .then(json=>{
+          const features = new GeoJSON().readFeatures(json);
+          console.log(features);
+          vectorsource_city_click.addFeatures(features)
+        })
+      // var aa = function(){
+      //   vectorsource_region_click.forEachFeature(function (item) {
+      //     var name = item.get('code_s');
+      //     if (name == adcode) {
+              
+      //         item.setStyle(selectStyle);
+              
+      //     }
+      //   })
+      // }
+      
+        
+      // })
+      
+    
+    
+    
+    })
+    map_wmts.addLayer(vector_city_click)
+    zoom = 8
+  }
+  if(zoom ==8){
+    map_wmts.on('singleclick',function(evt){
+      if(view.getZoom()>8&&view.getZoom()<10){
+        map_wmts.removeLayer(vector_region_click)
+        map_wmts.forEachFeatureAtPixel(evt.pixel,function(f){
+          selected = f;
+          let point = selected.getGeometry();
+        
+          view.fit(point)
+          view.setZoom(10.01)
+          const adcode = f.get('adcode')
+          console.log(adcode);
+          // setTimeout(() => {
+          //   aa()
+          // }, 100);
+          const featureRequest = new WFS().writeGetFeature({
+            srsName: 'EPSG:3857',
+            featureNS: 'http://localhost:8888/geoserver/home',
+            featurePrefix: 'home',
+            featureTypes: ['region'],
+            outputFormat: 'application/json',
+            filter: equalToFilter('code_s', adcode)
+          });
+          fetch('http://localhost:8888/geoserver/home/ows?service=WFS', {
+            method: 'POST',
+            body: new XMLSerializer().serializeToString(featureRequest),
+          })
+            .then(response=>{
+              return response.json();
+            })
+            .then(json=>{
+              const features = new GeoJSON().readFeatures(json);
+              vectorsource_region_click.addFeatures(features)
+            })
+          // var aa = function(){
+          //   vectorsource_region_click.forEachFeature(function (item) {
+          //     var name = item.get('code_s');
+          //     if (name == adcode) {
+                  
+          //         item.setStyle(selectStyle);
+                  
+          //     }
+          //   })
+          // }
+          
+            
+          // })
+          
+        
+        
+        
+        })
+        map_wmts.addLayer(vector_region_click)
+      }
+    })
+  }
+  if(view.getZoom()>8.01&&view.getZoom()<10){
+    map_wmts.removeLayer(vector_region_click)
+    map_wmts.forEachFeatureAtPixel(evt.pixel,function(f){
+      selected = f;
+      let point = selected.getGeometry();
+    
+      view.fit(point)
+      view.setZoom(10.01)
+      const adcode = f.get('adcode')
+      console.log(adcode);
+      // setTimeout(() => {
+      //   aa()
+      // }, 100);
+      const featureRequest = new WFS().writeGetFeature({
+        srsName: 'EPSG:3857',
+        featureNS: 'http://localhost:8888/geoserver/home',
+        featurePrefix: 'home',
+        featureTypes: ['region'],
+        outputFormat: 'application/json',
+        filter: equalToFilter('code_s', adcode)
+      });
+      fetch('http://localhost:8888/geoserver/home/ows?service=WFS', {
+        method: 'POST',
+        body: new XMLSerializer().serializeToString(featureRequest),
+      })
+        .then(response=>{
+          return response.json();
+        })
+        .then(json=>{
+          const features = new GeoJSON().readFeatures(json);
+          vectorsource_region_click.addFeatures(features)
+        })
+      // var aa = function(){
+      //   vectorsource_region_click.forEachFeature(function (item) {
+      //     var name = item.get('code_s');
+      //     if (name == adcode) {
+              
+      //         item.setStyle(selectStyle);
+              
+      //     }
+      //   })
+      // }
+      
+        
+      // })
+      
+    
+    
+    
+    })
+    map_wmts.addLayer(vector_region_click)
+  }
+  
 
+  
+  
 })
