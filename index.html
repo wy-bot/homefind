@@ -23,21 +23,27 @@
             position: absolute;
             top: 100px;
         }
+        /* @keyframes change {
+            0% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
+        .onchan {
+            animation: change 1.4s linear;
+        } */
     </style>
 </head>
 <body>
     <div id="map"></div>
     <div id="info"></div>
     <div id="status"></div>
-    <div id="overLay">
-        <div id="label">
-            <div class="marker"></div>
-            <a class="address" target="_blank" id="address"
-                href="http://www.openlayers.org/">武汉市
-            </a>
-        </div>
-    </div>
-
+    <div id="overLay"></div>
+    <div id="popup-content"></div>
     <script src="./apppp.js"></script>
 </body>
 </html>
