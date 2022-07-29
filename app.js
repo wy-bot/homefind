@@ -11,12 +11,12 @@ import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
-import {Icon, Stroke, Style, Fill} from 'ol/style';
+import {Icon, Stroke, Style, Fill, Circle} from 'ol/style';
 import marker from './images/marker.png';
 import dataList_province from './data/center.json';
 import dataList_city from './data/city.json';
 import dataList_region from './data/region.json';
-import dataList_count from './data/proerities-tree.json';
+import dataList_count from './data/properties-tree.json';
 import VectorContext from 'ol/render/VectorContext';
 import {Raster as RasterSource} from 'ol/source'
 import ImageLayer from 'ol/layer/Image';
@@ -29,6 +29,9 @@ import {
   like as likeFilter,
 } from 'ol/format/filter';
 import {bbox as bboxStrategy} from 'ol/loadingstrategy';
+import CircleStyle from 'ol/style/Circle';
+// import { Circle } from 'ol/geom';
+import { getVectorContext } from 'ol/render';
 
 
 //设置坐标系，范围
@@ -41,8 +44,6 @@ for (let z=0;z<=19;++z){
     resolutions[z] = size / Math.pow(2,z);
     matrixIds[z] = z
 }
-
-
 
 
 
@@ -432,6 +433,136 @@ let map_wmts = new Map({
     view: view
 })
 
+var region_count= []
+var pointFeature = [] 
+window.onload = function(){
+  
+  var xmlHttp = new XMLHttpRequest;
+  xmlHttp.open('POST','http://192.168.31.6:7777/info/',false);
+  xmlHttp.setRequestHeader('content-type','application/json')
+  // const obj = {}       
+  xmlHttp.send()
+  
+          // if(this.status==200){
+          //   const data = xmlHttp.responseText;
+          //   console.log(data);
+          // }
+  
+            
+  const data = JSON.parse(xmlHttp.responseText);
+  var data2 = data.data;
+  for(let i=0;i<data2.length;i++){
+    const region_pointx = data2[i][4]
+    const region_pointy = data2[i][5]
+    const feature = new Feature({
+      geometry: new Point(fromLonLat([region_pointx,region_pointy]))
+    })
+        // feature.setStyle(
+        //   new Style({
+        //     image: new CircleStyle({
+        //       fill: new Fill({
+        //         color: 'blue',
+        //       }),
+        //       radius: 10,
+        //     }),
+        //   })
+        // )
+    feature.setProperties({
+      "province": data2[i][0],
+      "city": data2[i][1],
+      "name": data2[i][2],
+      "uri": data2[i][3],
+      "region": data2[i][6],
+      "region_code": data2[i][7]
+    })
+    pointFeature.push(feature)
+  }
+  let pointerLayer = new VectorLayer({
+    source: new VectorSource(),
+    style: new Style({
+      image: new Circle({
+          radius: 20,
+          stroke: new Stroke({
+              color: "rgba(255,0,0,1)",
+              width: 3, //设置宽度
+          }),
+          fill: new Fill({
+              color: 'rgba(255, 0, 0, 1)',
+          }),
+      })
+    }),
+    zIndex: 9999,
+    minZoom: 10.1
+      // style: pointStyle
+  })
+      
+  pointerLayer.getSource().addFeatures(pointFeature)
+      
+  map_wmts.addLayer(pointerLayer)
+  let radius = 0
+  // pointerLayer.on('postrender',(evt)=>{
+  //       if(radius >= 10) radius = 0;
+  //       let opacity = (20-radius)*(1/20)
+  //       let pointStyle = new Style({
+  //         image: new Circle({
+  //           radius: radius,
+  //           stroke: new Stroke({
+  //             color: "rgba(255,0,0" + opacity + ")",
+  //             width: 3 - radius / 10, //设置宽度
+  //           }),
+  //         }),
+  //       })
+  //       let vectorContent = getVectorContext(evt)
+  //       vectorContent.setStyle(pointStyle)
+  //       pointFeature.forEach((feature)=>{
+  //         vectorContent.drawGeometry(feature.getGeometry())
+  //       })
+  //       radius = radius + 0.1
+  //       map_wmts.render()
+  // })
+    // var data2 = data.data;
+    // for(let i=0;i<data2.length;i++){
+    //   const region_pointx = data2[i][4]
+    //   const region_pointy = data2[i][5]
+    //   const feature = new Feature({
+    //     geometry: new Point(fromLonLat([region_pointx,region_pointy]))
+    //   })
+    //   pointFeature.push(feature)
+    // }
+          
+  var xmlHttp_count = new XMLHttpRequest;
+  xmlHttp_count.open('POST','http://192.168.31.6:7777/infocount/',false);
+  xmlHttp_count.setRequestHeader('content-type','application/json')
+  // const obj = {}
+  // xmlHttp_count.responseType = 'json'        
+  xmlHttp_count.send()
+  // xmlHttp_count.onload = function(){
+    
+  //   const data = xmlHttp_count.response
+  //   const data2 = data.data
+  //   for(let i=0;i<data2.length;i++){
+  //     region_count.push(data2[i])
+  //   }
+  // }
+  var region_count2 = JSON.parse(xmlHttp_count.responseText)
+  region_count2 = region_count2.data
+  for(let i=0;i<region_count2.length;i++){
+    region_count.push(region_count2[i])
+  }
+
+}
+  
+  
+  // $.ajax({
+  //   type: "post",
+  //   url: "http://192.168.31.6:7777/infocount/",
+  //   async: false,
+  //   success: function(result){
+  //     console.log(result);
+  //   }
+  // })
+
+  
 // map_wmts.on('moveend',checkZoom)
 // function checkZoom(){
 //     const extent = view.calculateExtent(map_wmts.getSize())
@@ -512,15 +643,17 @@ map_wmts.on('pointermove', function (e) {
 
   map_wmts.forEachFeatureAtPixel(e.pixel, function (f) {
     selected = f;
-    
-    selectStyle.getFill().setColor(f.get('COLOR') || '#ff9900');
-    f.setStyle(selectStyle);
-    
-    return true;
+    if(selected.getGeometry().getType()!='Point'){
+      selectStyle.getFill().setColor(f.get('COLOR') || '#ff9900');
+      f.setStyle(selectStyle);
+      
+      return true;
+    }
   });
 
   if (selected) {
     status.innerHTML = selected.get('name');
+    
   } else {
     status.innerHTML = '&nbsp;';
   }
@@ -733,7 +866,7 @@ map_wmts.on('pointermove', function (e) {
 
 
 
-map_wmts.on('postrender',function(){
+map_wmts.on('postrender',function(evt){
     if(view.getZoom()>4.5&&view.getZoom()<=8){
         
       const extentall = view.calculateExtent(map_wmts.getSize())
@@ -750,8 +883,12 @@ map_wmts.on('postrender',function(){
       var marker_count = document.querySelectorAll('.marker');
       
       if(element_count){
-        
-        map_wmts.getOverlays().clear()
+        map_wmts.getOverlays().getArray().slice(0).forEach(function(overlay) {
+          if(overlay.type="MyOverlay"){
+            map_wmts.removeOverlay(overlay);
+           }
+        })
+        // map_wmts.getOverlays().clear()
         for(let i=0;i<feature_province.length;i++){
       
       
@@ -769,8 +906,8 @@ map_wmts.on('postrender',function(){
           // addressDiv.innerText = '标注点';
           elementDiv.appendChild(addressDiv);
           elementDiv.appendChild(addresscountDiv);
-          var overLayElement = document.getElementById('overLay');
-          overLayElement.appendChild(elementDiv);
+          // var overLayElement = document.getElementById('overLay');
+          // overLayElement.appendChild(elementDiv);
           
           let centerpoint = [0,0]
           for(let item of dataList_province){
@@ -791,9 +928,10 @@ map_wmts.on('postrender',function(){
             position: centerpoint,
             positioning: 'center-center',
             element: elementDiv,
+            stopEvent: false
             // stopEvent: false
           });
-        
+          newOverlay.type = "MyOverlay"
           
           map_wmts.addOverlay(newOverlay)
         }
@@ -815,8 +953,12 @@ map_wmts.on('postrender',function(){
       var marker_count = document.querySelectorAll('.marker');
       
       if(element_count){
-        
-        map_wmts.getOverlays().clear()
+        map_wmts.getOverlays().getArray().slice(0).forEach(function(overlay) {
+          if(overlay.type="MyOverlay"){
+            map_wmts.removeOverlay(overlay);
+           }
+        })
+        // map_wmts.getOverlays().clear()
         for(let i=0;i<feature_city.length;i++){
       
       
@@ -860,9 +1002,9 @@ map_wmts.on('postrender',function(){
             position: centerpoint,
             positioning: 'center-center',
             element: elementDiv,
-            // stopEvent: false
+            stopEvent: false
           });
-        
+          newOverlay.type = "MyOverlay"
           
           map_wmts.addOverlay(newOverlay)
         }
@@ -882,12 +1024,23 @@ map_wmts.on('postrender',function(){
       .filter((feature) => feature.getGeometry().intersectsExtent(extentall))
       var element_count = document.querySelectorAll('.element');
       var marker_count = document.querySelectorAll('.marker');
-      
+      var feature_code = []
       if(element_count){
+        map_wmts.getOverlays().getArray().slice(0).forEach(function(overlay) {
+          if(overlay.type=="MyOverlay"){
+            map_wmts.removeOverlay(overlay)
+          }
+          // if(overlay.type=="content"){
+          //   console.log('1');
+          // }
+        })
+        // map_wmts.getOverlays().clear()
         
-        map_wmts.getOverlays().clear()
+        
+
+
         for(let i=0;i<feature_region.length;i++){
-      
+          feature_code.push(feature_region[i].get('adcode'))
       
           var elementDiv = document.createElement('div');
           elementDiv.className = 'element';
@@ -898,9 +1051,11 @@ map_wmts.on('postrender',function(){
           addressDiv.className = 'address';
           addressDiv.setAttribute('code',feature_region[i].get('adcode'));
           addressDiv.innerText = feature_region[i].get('name');
-        
+          var addresscountDiv = document.createElement('span');
+          addresscountDiv.className = 'count';
           // addressDiv.innerText = '标注点';
           elementDiv.appendChild(addressDiv);
+          elementDiv.appendChild(addresscountDiv)
           var overLayElement = document.getElementById('overLay');
           overLayElement.appendChild(elementDiv);
           
@@ -911,7 +1066,11 @@ map_wmts.on('postrender',function(){
             if(`${item.region_code}` == feature_region[i].get('adcode')){
                 centerpoint[0] = pointx
                 centerpoint[1] = pointy
-                
+                for(let j=0;j<region_count.length;j++){
+                  if(feature_region[i].get('adcode') == region_count[j][0]){
+                    addresscountDiv.innerText = region_count[j][1]
+                  }
+                }
             }
           }
           //实例化overlay标注，添加到地图容器中
@@ -919,12 +1078,36 @@ map_wmts.on('postrender',function(){
             position: centerpoint,
             positioning: 'center-center',
             element: elementDiv,
-            // stopEvent: false
+            stopEvent: false
           });
-        
+          newOverlay.type = "MyOverlay"
           
           map_wmts.addOverlay(newOverlay)
         }
+        
+        // var xmlHttp = new XMLHttpRequest;
+        // xmlHttp.open('POST','http://192.168.31.6:7777/login/');
+        // xmlHttp.setRequestHeader('content-type','application/json')
+        // const obj = {
+        //   "region_code": feature_code
+        // }
+        
+        // xmlHttp.send(JSON.stringify(obj))
+        // xmlHttp.onreadystatechange = function(){
+        //   // if(this.status==200){
+        //   //   const data = xmlHttp.responseText;
+        //   //   console.log(data);
+        //   // }
+          
+        //     const data = xmlHttp.responseText;
+        //     const data2 = JSON.parse(data);
+        //     const data3 = data2.data;
+        //     for(let i=0;i<data3.length;i++){
+        //       const region_pointx = data3[i][4]
+        //       const region_pointy = data3[i][5]
+        //     }
+          
+        // }
       }
     }
 
@@ -934,6 +1117,8 @@ map_wmts.on('postrender',function(){
         map_wmts.getOverlays().clear()
     }
 })
+
+
 
 // var point = [13618024.112759456, 4748961.400167575]
 // var feature = new Feature({
@@ -974,6 +1159,10 @@ map_wmts.on('postrender',function(){
 //     map_wmts.addOverlay(newOverlay)
 // })
 
+var content = document.getElementById('popup-content');
+var overLay_pop = new Overlay({
+          element: content
+        })
 
 map_wmts.on('singleclick',function(evt){
   let selected = null;
@@ -987,17 +1176,25 @@ map_wmts.on('singleclick',function(evt){
     })
   })
   var zoom = null
-  if(view.getZoom()>4.5&&view.getZoom()<8){
+  var zoom_query = view.getZoom()
+  map_wmts.removeLayer(vector_city_click)
+  map_wmts.removeLayer(vector_region_click)
+  
+  if(zoom_query>4.5&&zoom_query<8){
     zoom = null
     map_wmts.removeLayer(vector_city_click)
+    map_wmts.removeLayer(vector_region_click)
+    vectorsource_city_click.clear()
+    vectorsource_region_click.clear()
+    
     map_wmts.forEachFeatureAtPixel(evt.pixel,function(f){
       selected = f;
       let point = selected.getGeometry();
-    
+      
       view.fit(point)
       view.setZoom(8.01)
       const adcode = f.get('adcode')
-      console.log(adcode);
+      
       // setTimeout(() => {
       //   aa()
       // }, 100);
@@ -1018,7 +1215,7 @@ map_wmts.on('singleclick',function(evt){
         })
         .then(json=>{
           const features = new GeoJSON().readFeatures(json);
-          console.log(features);
+          
           vectorsource_city_click.addFeatures(features)
         })
       // var aa = function(){
@@ -1041,65 +1238,14 @@ map_wmts.on('singleclick',function(evt){
     })
     map_wmts.addLayer(vector_city_click)
     zoom = 8
+    
   }
-  if(zoom ==8){
-    map_wmts.on('singleclick',function(evt){
-      if(view.getZoom()>8&&view.getZoom()<10){
-        map_wmts.removeLayer(vector_region_click)
-        map_wmts.forEachFeatureAtPixel(evt.pixel,function(f){
-          selected = f;
-          let point = selected.getGeometry();
-        
-          view.fit(point)
-          view.setZoom(10.01)
-          const adcode = f.get('adcode')
-          console.log(adcode);
-          // setTimeout(() => {
-          //   aa()
-          // }, 100);
-          const featureRequest = new WFS().writeGetFeature({
-            srsName: 'EPSG:3857',
-            featureNS: 'http://localhost:8888/geoserver/home',
-            featurePrefix: 'home',
-            featureTypes: ['region'],
-            outputFormat: 'application/json',
-            filter: equalToFilter('code_s', adcode)
-          });
-          fetch('http://localhost:8888/geoserver/home/ows?service=WFS', {
-            method: 'POST',
-            body: new XMLSerializer().serializeToString(featureRequest),
-          })
-            .then(response=>{
-              return response.json();
-            })
-            .then(json=>{
-              const features = new GeoJSON().readFeatures(json);
-              vectorsource_region_click.addFeatures(features)
-            })
-          // var aa = function(){
-          //   vectorsource_region_click.forEachFeature(function (item) {
-          //     var name = item.get('code_s');
-          //     if (name == adcode) {
-                  
-          //         item.setStyle(selectStyle);
-                  
-          //     }
-          //   })
-          // }
-          
-            
-          // })
-          
-        
-        
-        
-        })
-        map_wmts.addLayer(vector_region_click)
-      }
-    })
-  }
-  if(view.getZoom()>8.01&&view.getZoom()<10){
+  
+  if(zoom_query==8.01){
+    map_wmts.removeLayer(vector_city_click)
     map_wmts.removeLayer(vector_region_click)
+    vectorsource_city_click.clear()
+    vectorsource_region_click.clear()
     map_wmts.forEachFeatureAtPixel(evt.pixel,function(f){
       selected = f;
       let point = selected.getGeometry();
@@ -1107,7 +1253,7 @@ map_wmts.on('singleclick',function(evt){
       view.fit(point)
       view.setZoom(10.01)
       const adcode = f.get('adcode')
-      console.log(adcode);
+      
       // setTimeout(() => {
       //   aa()
       // }, 100);
@@ -1148,6 +1294,261 @@ map_wmts.on('singleclick',function(evt){
     
     
     })
+    map_wmts.addLayer(vector_region_click)
+  }
+
+  if(zoom_query>8.01&&zoom_query<10){
+    vectorsource_city_click.clear()
+    vectorsource_region_click.clear()
+    map_wmts.removeLayer(vector_city_click)
+    map_wmts.removeLayer(vector_region_click)
+    
+    map_wmts.forEachFeatureAtPixel(evt.pixel,function(f){
+      selected = f;
+      let point = selected.getGeometry();
+    
+      view.fit(point)
+      view.setZoom(10.01)
+      const adcode = f.get('adcode')
+      
+      // setTimeout(() => {
+      //   aa()
+      // }, 100);
+      const featureRequest = new WFS().writeGetFeature({
+        srsName: 'EPSG:3857',
+        featureNS: 'http://localhost:8888/geoserver/home',
+        featurePrefix: 'home',
+        featureTypes: ['region'],
+        outputFormat: 'application/json',
+        filter: equalToFilter('code_s', adcode)
+      });
+      fetch('http://localhost:8888/geoserver/home/ows?service=WFS', {
+        method: 'POST',
+        body: new XMLSerializer().serializeToString(featureRequest),
+      })
+        .then(response=>{
+          return response.json();
+        })
+        .then(json=>{
+          const features = new GeoJSON().readFeatures(json);
+          vectorsource_region_click.addFeatures(features)
+        })
+      // var aa = function(){
+      //   vectorsource_region_click.forEachFeature(function (item) {
+      //     var name = item.get('code_s');
+      //     if (name == adcode) {
+              
+      //         item.setStyle(selectStyle);
+              
+      //     }
+      //   })
+      // }
+      
+        
+      // })
+      
+    
+    
+    
+    })
+    map_wmts.addLayer(vector_region_click)
+  }
+  if(zoom_query>10){
+    vectorsource_city_click.clear()
+    vectorsource_region_click.clear()
+    map_wmts.removeLayer(vector_city_click)
+    map_wmts.removeLayer(vector_region_click)
+    
+    var sum = []
+    map_wmts.forEachFeatureAtPixel(evt.pixel,function(f){
+      selected = f;
+      sum.push(selected)
+    })
+    
+    if(sum.length == 1){
+      console.log('1');
+      if(sum[0].getGeometry().getType()!='Point'){
+        // console.log('1');
+        let point = sum[0].getGeometry();
+    
+        view.fit(point)
+      
+        const adcode = sum[0].get('adcode')
+      
+
+        const featureRequest = new WFS().writeGetFeature({
+          srsName: 'EPSG:3857',
+          featureNS: 'http://localhost:8888/geoserver/home',
+          featurePrefix: 'home',
+          featureTypes: ['region'],
+          outputFormat: 'application/json',
+          filter: equalToFilter('adcode', adcode)
+        });
+        fetch('http://localhost:8888/geoserver/home/ows?service=WFS', {
+          method: 'POST',
+          body: new XMLSerializer().serializeToString(featureRequest),
+        })
+          .then(response=>{
+            return response.json();
+          })
+          .then(json=>{
+            const features = new GeoJSON().readFeatures(json);
+            vectorsource_region_click.addFeatures(features)
+          })
+      }
+      if(sum[0].getGeometry().getType()=='Point'){
+        // console.log('2');
+        //popup弹窗
+        let point = sum[0].getGeometry();
+    
+        view.fit(point)
+        view.setZoom(12)
+        var attr = sum[0].getProperties();
+        var coordinate = evt.coordinate;
+        content.innerHTML = 
+        "<ul>" + '<li>省市: ' + attr.province +'</li>' +
+        '<li>名称:' + attr.name + '</li>' +
+        "</ul>";
+        overLay_pop.setPosition(coordinate);
+        overLay_pop.stopEvent = 'true'
+        overLay_pop.type = "content"
+        // console.log(overLay_pop);
+        map_wmts.addOverlay(overLay_pop)
+      }
+    }
+    if(sum.length == 2){
+      
+      if(sum[0].getGeometry().getType()!='Point'&&sum[1].getGeometry().getType()!='Point'){
+        let point = sum[0].getGeometry();
+    
+        view.fit(point)
+      
+        const adcode = sum[0].get('adcode')
+      
+
+        const featureRequest = new WFS().writeGetFeature({
+          srsName: 'EPSG:3857',
+          featureNS: 'http://localhost:8888/geoserver/home',
+          featurePrefix: 'home',
+          featureTypes: ['region'],
+          outputFormat: 'application/json',
+          filter: equalToFilter('adcode', adcode)
+        });
+        fetch('http://localhost:8888/geoserver/home/ows?service=WFS', {
+          method: 'POST',
+          body: new XMLSerializer().serializeToString(featureRequest),
+        })
+          .then(response=>{
+            return response.json();
+          })
+          .then(json=>{
+            const features = new GeoJSON().readFeatures(json);
+            vectorsource_region_click.addFeatures(features)
+          })
+      }
+      
+      if(sum[0].getGeometry().getType()=='Point'){
+        // console.log('2');
+        //popup弹窗
+        let point = sum[0].getGeometry();
+    
+        view.fit(point)
+        view.setZoom(12)
+        var attr = sum[0].getProperties();
+        var coordinate = evt.coordinate;
+        content.innerHTML = 
+        "<ul>" + '<li>省市: ' + attr.province +'</li>' +
+        '<li>名称:' + attr.name + '</li>' +
+        "</ul>";
+        overLay_pop.setPosition(coordinate);
+        overLay_pop.stopEvent = 'true'
+        overLay_pop.type = "content"
+        // console.log(overLay_pop);
+        map_wmts.addOverlay(overLay_pop)
+      }
+      if(sum[1].getGeometry().getType()=='Point'){
+        console.log('2');
+        //popup弹窗
+        let point = sum[1].getGeometry();
+    
+        view.fit(point)
+        view.setZoom(12)
+        var attr = sum[1].getProperties();
+        var coordinate = evt.coordinate;
+        content.innerHTML = 
+        "<ul>" + '<li>省市: ' + attr.province +'</li>' +
+        '<li>名称:' + attr.name + '</li>' +
+        "</ul>";
+        overLay_pop.setPosition(coordinate);
+        overLay_pop.stopEvent = 'true'
+        overLay_pop.type = "content"
+        // console.log(overLay_pop);
+        map_wmts.addOverlay(overLay_pop)
+      }
+    }
+
+    if(sum.length == 3){
+      
+      
+      
+      if(sum[0].getGeometry().getType()=='Point'){
+        // console.log('2');
+        //popup弹窗
+        let point = sum[0].getGeometry();
+    
+        view.fit(point)
+        view.setZoom(12)
+        var attr = sum[0].getProperties();
+        var coordinate = evt.coordinate;
+        content.innerHTML = 
+        "<ul>" + '<li>省市: ' + attr.province +'</li>' +
+        '<li>名称:' + attr.name + '</li>' +
+        "</ul>";
+        overLay_pop.setPosition(coordinate);
+        overLay_pop.stopEvent = 'true'
+        overLay_pop.type = "content"
+        // console.log(overLay_pop);
+        map_wmts.addOverlay(overLay_pop)
+      }
+      if(sum[1].getGeometry().getType()=='Point'){
+        console.log('2');
+        //popup弹窗
+        let point = sum[1].getGeometry();
+    
+        view.fit(point)
+        view.setZoom(12)
+        var attr = sum[1].getProperties();
+        var coordinate = evt.coordinate;
+        content.innerHTML = 
+        "<ul>" + '<li>省市: ' + attr.province +'</li>' +
+        '<li>名称:' + attr.name + '</li>' +
+        "</ul>";
+        overLay_pop.setPosition(coordinate);
+        overLay_pop.stopEvent = 'true'
+        overLay_pop.type = "content"
+        // console.log(overLay_pop);
+        map_wmts.addOverlay(overLay_pop)
+      }
+      if(sum[2].getGeometry().getType()=='Point'){
+        console.log('2');
+        //popup弹窗
+        let point = sum[2].getGeometry();
+    
+        view.fit(point)
+        view.setZoom(12)
+        var attr = sum[2].getProperties();
+        var coordinate = evt.coordinate;
+        content.innerHTML = 
+        "<ul>" + '<li>省市: ' + attr.province +'</li>' +
+        '<li>名称:' + attr.name + '</li>' +
+        "</ul>";
+        overLay_pop.setPosition(coordinate);
+        overLay_pop.stopEvent = 'true'
+        overLay_pop.type = "content"
+        // console.log(overLay_pop);
+        map_wmts.addOverlay(overLay_pop)
+      }
+    }
     map_wmts.addLayer(vector_region_click)
   }
   
